@@ -56,10 +56,12 @@ Route::group(['prefix' => '/m'], function () {
             Route::post('/pp', [MobileAuthController::class, 'updatePhotoProfile']);
             Route::put('/pw', [MobileAuthController::class, 'changePassword']);
             Route::put('/pin', [MobileAuthController::class, 'changePin']);
+            Route::put('/acc', [MobileAuthController::class, 'updateAccount']);
             Route::put('/devicetoken', [MobileAuthController::class, 'updateDeviceToken']);
         });
         Route::delete('/logout', [MobileAuthController::class, 'logout']);
         Route::delete('/delete', [MobileAuthController::class, 'deleteAccount']);
+        Route::delete('/delpp', [MobileAuthController::class, 'deletePhotoProfile']);
     });
 
     // verify
