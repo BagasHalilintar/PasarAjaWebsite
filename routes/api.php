@@ -140,6 +140,7 @@ Route::group(['prefix' => '/m'], function () {
     Route::group(['prefix' => 'trx'], function () {
         Route::get('/', [TransactionController::class, 'listOfTrx']);
         Route::get('/e', [TransactionController::class, 'trxDetail']);
+        Route::get('/sctrx', [TransactionController::class, 'scanTrx']);
         Route::post('/crtrx', [TransactionController::class, 'createTrx']);
         Route::put('/cbcus', [TransactionController::class, 'cancelByCustomer']);
         Route::put('/cbmer', [TransactionController::class, 'cancelByMerchant']);

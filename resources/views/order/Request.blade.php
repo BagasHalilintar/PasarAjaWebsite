@@ -67,7 +67,7 @@
 
 <body>
     <div class="container">
-        <h1>Pesanan Dibatalkan {{ $data->order_id }}</h1>
+        <h1>Pesanan Dibuat {{ $data->order_id }}</h1>
         <div class="order-info">
             <h2>Informasi Pesanan</h2>
             <p><strong>Transaksi ID:</strong> {{ $data->order_id }}</p>

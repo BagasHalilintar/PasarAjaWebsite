@@ -139,6 +139,7 @@ class TransactionController extends Controller
                             'prod.price',
                             DB::raw('(dtl.promo_price * quantity) as promo_price'),
                             'dtl.notes',
+                            DB::raw('(prod.price * dtl.quantity) AS sub_total'),
                             DB::raw('(prod.price * dtl.quantity) - (dtl.promo_price * dtl.quantity) AS total_price')
                         ]
                     )
@@ -259,6 +260,7 @@ class TransactionController extends Controller
                         'prod.price',
                         DB::raw('(dtl.promo_price * quantity) as promo_price'),
                         'dtl.notes',
+                        DB::raw('(prod.price * dtl.quantity) AS sub_total'),
                         DB::raw('(prod.price * dtl.quantity) - (dtl.promo_price * dtl.quantity) AS total_price')
                     ]
                 )
@@ -293,8 +295,48 @@ class TransactionController extends Controller
         return response()->json(['status' => 'success', 'message' => 'testing', 'data' => $trxData], 200);
     }
 
-    public function scanTrx(Request $request){
+    public function scanTrx(Request $request)
+    {
         // cek apakah pesanan yang discan memiliki status 'InTaking'
+        $idShop = $request->input('id_shop');
+        $orderCode = $request->input('order_code');
+
+        // cek toko terdaftar atau tidak
+        $isExistShop = $this->isExistShop($idShop);
+        if ($isExistShop['status'] === 'error') {
+            return response()->json(['status' => 'error', 'message' => $isExistShop['message']], 404);
+        }
+
+        // get data trx
+        $tableProd = $this->generateTableProd($idShop);
+        $tableTrx = $this->generateTableTrx($idShop);
+        $tableDtl = $this->generateTableDtl($idShop);
+
+        // mendapatkan data transaksi
+        $trxDetail = $this->trxDetail($request)->getData();
+
+        // cek apakah data berhasil didapatkan
+        if ($trxDetail->status === 'error') {
+            return response()->json(['status' => 'erorr', 'message' => $trxDetail->message], 400);
+        }
+
+        // get data
+        $trxData = $trxDetail->data;
+
+        // cek status
+        if ($trxData->status === 'InTaking' || $trxData->status === 'Confirmed') {
+
+            // cek expiration
+            $currentMillis = Carbon::now()->timestamp * 1000;
+            if ($currentMillis > $trxData->expiration_time) {
+                return response()->json(['status' => 'error', 'message' => 'Transaksi telah kadaluarsa'], 400);
+            }
+
+            // return data scan
+            return response()->json(['status' => 'success', 'message' => 'Berhasil di scan', 'data' => $trxData], 200);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Status tidak dalam pengambilan/konfirmasi'], 400);
+        }
     }
 
     public function createTrx(
@@ -386,9 +428,13 @@ class TransactionController extends Controller
 
         // convert $takenDate to datetime
         $tDate = new DateTime($takenDate);
+        
+        // set time ke 0
+        $currentDate->setTime(0, 0, 0);
+        $tDate->setTime(0, 0, 0);
 
         // cek tanggal diambil < tanggal saat ini
-        if ($tDate < $currentDate) {
+        if ($tDate < $currentDate) { // saya ingin membandingkan tanggal nya saja tanpa waktunnya
             return response()->json(['status' => 'error', 'message' => 'Tanggal diambil tidak boleh kurang dari tanggal saat ini'], 400);
         }
 
