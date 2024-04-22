@@ -196,7 +196,7 @@
             <div class="col-md-12 grid-margin">
               <div class="row">
                 <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-                  <h2 class="font-weight-bold mt-2">Data Event</h2>
+                  <h2 class="font-weight-bold mt-2">Data Promo</h2>
                 </div>
                 <div class="col-12 col-xl-4">
                  <div class="justify-content-end d-flex">
@@ -504,14 +504,14 @@
             <div class="col-md-7 grid-margin stretch-car">
               <div class="card">
                 <div class="card-body">
-                  <p class="card-title mb-0">Tambah Data</p>
+                  {{-- <p class="card-title mb-0">Tambah Data</p> --}}
 
                   <form action="{{ route('upload.proses') }}" method="POST" enctype="multipart/form-data">
             {{ csrf_field() }}
 
-                    <div class="mb-3">
+                    {{-- <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label">Judul</label>
-                    <input type="text" class="form-control" id="judul" placeholder="Masukan Judul" name="judul" autofocus required>
+                    <input type="text" class="form-control" id="nama_wisata" placeholder="Masukan Nama Wisata" name="nama_wisata" autofocus required>
                     </div>
                     <div class="mb-3">
                     <label for="formFile" class="form-label">Upload Gambar</label>
@@ -521,7 +521,7 @@
                     <label for="deskripsi" class="form-label">Deskripsi</label>
                     <textarea class="form-control" id="deskripsi" rows="3" name="deskripsi" required></textarea>
                 </div>
-                    <a href="#" class="btn mt-5" id="btn-detail">Tambah Event</a>
+                    <a href="#" class="btn mt-5" id="btn-detail">Tambah Event</a> --}}
                   <!-- <div class="table-responsive">
                     <table class="table table-striped table-borderless">
                     
