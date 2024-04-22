@@ -170,7 +170,7 @@ class ProductMerchantController extends Controller
     public function detailListComplain(Request $request, ProductComplainController $complain)
     {
         $idShop = $request->input('id_shop');
-        $idShop = $request->input('id_product');
+        $idProd = $request->input('id_product');
 
         $isExistShop = $this->isExistShop($idShop);
         if ($isExistShop['status'] === 'success') {
@@ -191,7 +191,7 @@ class ProductMerchantController extends Controller
     public function detailListHistory(Request $request, ProductHistoryController $history)
     {
         $idShop = $request->input('id_shop');
-        $idShop = $request->input('id_product');
+        $idProd = $request->input('id_product');
 
         $isExistShop = $this->isExistShop($idShop);
         if ($isExistShop['status'] === 'success') {

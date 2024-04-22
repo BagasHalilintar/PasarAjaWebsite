@@ -504,7 +504,7 @@
             <div class="col-md-7 grid-margin stretch-car">
               <div class="card">
                 <div class="card-body">
-                  <p class="card-title mb-0">Tambah Data</p>
+                  <p class="card-title mb-0">Tambah Informasi</p>
 
                   <form action="{{ route('upload.proses') }}" method="POST" enctype="multipart/form-data">
             {{ csrf_field() }}

@@ -17,4 +17,12 @@ class LayoutsController extends Controller
     public function tambah(){
         return view('layouts.tambah');
     }
-}
+
+    public function promo(){
+        return view('layouts.promo');
+    }
+
+    public function informasi(){
+        return view('layouts.informasi');
+    }
+} 
