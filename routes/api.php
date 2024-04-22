@@ -16,6 +16,7 @@ use App\Http\Controllers\Mobile\Product\ProductHistoryController;
 use App\Http\Controllers\Mobile\Product\ProductPromoController;
 use App\Http\Controllers\Mobile\Product\ProductReviewController;
 use App\Http\Controllers\Mobile\Transaction\TransactionController;
+use App\Http\Controllers\Mobile\Transaction\UserTransactionController;
 use App\Http\Controllers\Website\ShopController;
 use App\Models\ProductCategories;
 use Illuminate\Http\Request;
@@ -83,6 +84,8 @@ Route::group(['prefix' => '/m'], function () {
     // product
     Route::group(['prefix' => 'prod'], function () {
         Route::get('/', [ProductController::class, 'allProducts']);
+        Route::get('/fire', [ProductController::class, 'toFire']);
+        Route::get('/t', [ProductController::class, 'testAll']);
         Route::post('/create', [ProductController::class, 'createProduct']);
         Route::get('/units', [ProductController::class, 'getUnits']);
         Route::get('/data', [ProductController::class, 'dataProduct']);
@@ -103,6 +106,7 @@ Route::group(['prefix' => '/m'], function () {
         // review
         Route::group(['prefix' => '/rvw'], function () {
             Route::get('/', [ProductReviewController::class, 'getAllReview']);
+            Route::get('/rwvprod', [ProductReviewController::class, 'getOnlyReviews']);
             Route::get('/prod', [ProductReviewController::class, 'getReviews']);
             Route::post('/add', [ProductReviewController::class, 'addReview']);
             Route::put('/update', [ProductReviewController::class, 'updateReview']);
@@ -148,6 +152,10 @@ Route::group(['prefix' => '/m'], function () {
         Route::put('/ittrx', [TransactionController::class, 'inTakingTrx']);
         Route::put('/sbtTrx', [TransactionController::class, 'submittedTrx']);
         Route::put('/fstrx', [TransactionController::class, 'finishTrx']);
+    });
+
+    Route::group(['prefix' => '/utrx'], function () {
+        Route::get('list', [UserTransactionController::class, 'listOfTrx']);
     });
 
     Route::group(['prefix' => '/page'], function () {
