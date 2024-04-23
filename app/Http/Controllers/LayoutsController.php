@@ -17,4 +17,7 @@ class LayoutsController extends Controller
     public function tambah(){
         return view('layouts.tambah');
     }
+    public function profil(){
+        return view('layouts.profil');
+    }
 }
