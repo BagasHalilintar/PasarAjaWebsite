@@ -222,24 +222,39 @@
   <table class="table align-middle">
     <thead>
       <tr>
-      <th>Image</th>
-            <th>Title</th>
-            <th>Description</th>
+      <th>No</th>
+            <th>Gambar</th>
+            <th>Judul</th>
+            <th>Deskripsi</th>
+            <th>aksi</th>
       </tr>
     </thead>
     <tbody>
+      @php
+      $i = 1;
+      @endphp
+      @if($dataEvent->count()  > 0)
+      @foreach ($dataEvent as $de)
       <tr>
-        ...
+        <td scoope="row">{{ $i++ }}</td>
+        <td><img  src="{{ url('/data_event/'.$de->foto) }}"></td>
+        <td>{{ $de->judul }}</td>
+        <td>{{ $de->deskripsi }}</td>
+        <td>
+        <form id="deleteForm_{{ $de->id_event }}" action="{{ route('event.destroy', $de->id_event) }}" method="POST" class="btn btn-danger p-0">
+                @csrf
+                @method('DELETE')
+                <button type="button" class="btn btn-danger deleteBtn" onclick="confirmDelete('deleteForm_{{ $de->id_event }}')">Hapus</button>
+              </form>
+            </td>
+        </td>
       </tr>
-      <tr class="align-bottom">
-        ...
-      </tr>
+      @endforeach
+      @else
       <tr>
-        <td>...</td>
-        <td>...</td>
-        <td class="align-top">This cell is aligned to the top.</td>
-        <td>...</td>
-      </tr>
+      	<td colspan="5" class= "text-center">Data Tidak Ditemukan!</td>
+        </tr>
+        @endif
     </tbody>
   </table>
 </div>
@@ -506,22 +521,27 @@
                 <div class="card-body">
                   <p class="card-title mb-0">Tambah Data</p>
 
-                  <form action="{{ route('upload.proses') }}" method="POST" enctype="multipart/form-data">
-            {{ csrf_field() }}
+                  <form action="{{ route('uploadevent.proses') }}" method="POST" enctype="multipart/form-data">
+                  @csrf
 
                     <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Judul</label>
-                    <input type="text" class="form-control" id="nama_wisata" placeholder="Masukan Nama Wisata" name="nama_wisata" autofocus required>
+                        <label for="exampleFormControlInput1" class="form-label">Judul</label>
+                        <input type="text" class="form-control" id="judul" placeholder="Masukan Judul" name="judul" autofocus required>
                     </div>
+                    
                     <div class="mb-3">
-                    <label for="formFile" class="form-label">Upload Gambar</label>
-                    <input class="form-control" type="file" id="gambar" name="gambar"required>
+                        <label for="formFile" class="form-label">Upload Gambar</label>
+                        <input class="form-control" type="file" id="gambar" name="foto" required>
                     </div>
+                    
                     <div class="mb-3">
-                    <label for="deskripsi" class="form-label">Deskripsi</label>
-                    <textarea class="form-control" id="deskripsi" rows="3" name="deskripsi" required></textarea>
-                </div>
-                    <a href="#" class="btn mt-5" id="btn-detail">Tambah Event</a>
+                        <label for="deskripsi" class="form-label">Deskripsi</label>
+                        <textarea class="form-control" id="deskripsi" rows="3" name="deskripsi" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn mt-5" id="btn-detail">Tambah Event</button>
+
+                </form>
                   <!-- <div class="table-responsive">
                     <table class="table table-striped table-borderless">
                     
@@ -867,6 +887,26 @@
   <!-- container-scroller -->
 
   @include('include.scripct')
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script>
+    // Fungsi untuk menampilkan konfirmasi penghapusan dengan SweetAlert2
+    function confirmDelete(formId) {
+      Swal.fire({
+        title: 'Apakah Anda yakin?',
+        text: "Anda tidak akan dapat mengembalikan ini!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, hapus saja!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Jika dikonfirmasi, kirimkan form penghapusan
+          document.getElementById(formId).submit();
+        }
+      });
+    }
+  </script>
  
 </body>
 </html>

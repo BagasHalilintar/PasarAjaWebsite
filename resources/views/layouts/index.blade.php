@@ -243,7 +243,7 @@
                   <div class="card" style= "background-color: #0D4A31; color: white;">
                     <div class="card-body">
                       <p class="mb-4">Jumlah Informasi</p>
-                      <p class="fs-30 mb-2">5</p>               
+                      <p class="fs-30 mb-2">{{ $totalinformasi }}</p>               
                     </div>
                   </div>
                 </div>
@@ -262,7 +262,7 @@
                 <div class="card" style= "background-color: #0D4A31; color: white;">
                     <div class="card-body">
                       <p class="mb-4">Jumlah Event</p>
-                      <p class="fs-30 mb-2">2</p>
+                      <p class="fs-30 mb-2">{{ $totalevent }}</p>
                       
                     </div>
                   </div>

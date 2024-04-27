@@ -516,6 +516,44 @@ class MobileAuthController extends Controller
         }
     }
 
+    public function updateAccount(Request $request, User $user, JwtMobileController $jwtController)
+    {
+
+        // validasi data
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'full_name' => 'required|string|min:4|max:50',
+        ], [
+            'email' => 'Email tidak valid.',
+            'full_name' => 'Nama tidak valid'
+        ]);
+
+        // cek validasi
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => $validator->errors()->first()], 400);
+        }
+
+        $email = $request->input('email');
+        $fullName = $request->input('full_name');
+
+        $newData = [
+            'full_name' => $fullName,
+            'updated_at' => Carbon::now(),
+        ];
+
+        // update data
+        $updateData = $user->where('email', $email)
+        ->update($newData);
+
+        // return response
+        if ($updateData) {
+            return response()->json(['status' => 'success', 'message' => 'Data diupdate', 'data' => $newData], 200);
+        }else{
+            return response()->json(['status' => 'error', 'message' => 'Data gagal diupdate'], 400);
+        }
+    }
+
+
     public function deletePhotoProfile(Request $request, User $user, JwtMobileController $jwtController)
     {
 

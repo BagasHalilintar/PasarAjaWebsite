@@ -1,18 +1,19 @@
 <?php
 
 namespace  App\Http\Controllers;
+use App\Models\Event;
 use App\Models\Informasi;
 use App\Models\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class UploadController extends Controller{
+class UploadEventController extends Controller{
     public function index() {
 
-        $inputInformasi = Informasi::get();
-        return view('layouts.informasi',['inputInformasi' => $inputInformasi]);
+        $inputEvent = Event::select('id', 'judul', 'deskripsi', 'foto')->get();
+        return view('layouts.event',['inputEvent' => $inputEvent]);
     }
-    public function input_informasi(Request $request)
+    public function input_event(Request $request)
     {
         // Validasi input
         $validasi = Validator::make($request->all(), [
@@ -27,25 +28,25 @@ class UploadController extends Controller{
         }
 
         // Simpan data paket ke dalam database
-        $datainformasi = $request->only(['judul', 'deskripsi']);
+        $dataEvent = $request->only(['judul', 'deskripsi']);
         
         // Upload dan simpan foto
         $foto = $request->file('foto');
         $nama_foto = time() . "_" . $foto->getClientOriginalName();
-        $tujuan_upload = 'data_informasi'; // Ubah sesuai dengan folder tujuan Anda
+        $tujuan_upload = 'data_event'; // Ubah sesuai dengan folder tujuan Anda
         $foto->move($tujuan_upload, $nama_foto);
-        $datainformasi['foto'] = $nama_foto;
+        $dataEvent['foto'] = $nama_foto;
 
-        Informasi::create($datainformasi);
+        Event::create($dataEvent);
 
-        return redirect('/layouts/informasi')->with('success', 'Data informasi berhasil disimpan');
+        return redirect('/layouts/event')->with('success', 'Data event berhasil disimpan');
 
     }
-    public function destroy($id_informasi)
+    public function destroy($id_event)
     {
-        $informasi = Informasi::findOrFail($id_informasi);
-        $informasi->delete();
+        $event = Event::findOrFail($id_event);
+        $event->delete();
 
-        return redirect()->back()->with('success', 'Paket berhasil dihapus');
+        return redirect()->back()->with('success', 'Event berhasil dihapus');
     }
 }

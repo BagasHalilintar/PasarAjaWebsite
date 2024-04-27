@@ -34,7 +34,8 @@
                         <li class="nav-item"><a id="nav-text3" href="#about">Promo</a></li>
                         <li class="nav-item"><a id="nav-text4" href="#team">Event</a></li>
                         <li class="nav-item"><a id="nav-text5" href="#contact">Contact</a></li>
-                        <button type="button" class="btn btn-outline-success mb-3" id="sign-in">Sign In</button>
+                        <a class="btn btn-outline-success mb-3" id="sign-in" href="{{ route('login') }}">Sign In</a>
+
                     </ul>
                 </div>
             </div>

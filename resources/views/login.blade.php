@@ -48,7 +48,7 @@
               <button class="btn btn-info btn-lg btn-block" id="btn-detail" type="button">Login</button>
             </div>
 
-            <p class="small mb-5 pb-lg-2"><a class="text-detail" href="#!">Lupa Password?</a></p>
+            <p class="small mb-5 pb-lg-2"><a class="text-detail" href="/forgot">Lupa Password?</a></p>
             <!-- <p>Don't have an account? <a href="#!" class="link-info">Register here</a></p> -->
 
           </form>
