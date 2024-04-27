@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Website\ShopController;
+use App\Models\Shops;
 use Illuminate\Http\Request;
 
 class LayoutsController extends Controller
@@ -14,8 +16,9 @@ class LayoutsController extends Controller
         return view('layouts.event');
     }
 
-    public function tambah(){
-        return view('layouts.tambah');
+    public function tambah(ShopController $shopController, Shops $shops){
+        $listShop = $shopController->listOfShop($shops)->getData()->data;
+        return view('layouts.tambah', ['data' => $listShop]);
     }
 
     public function promo(){

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Website;
 
 use App\Http\Controllers\Controller;
 use App\Models\Shops;
+use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,23 @@ use Illuminate\Support\Facades\Validator;
 
 class ShopController extends Controller
 {
+
+    public function listOfShop(Shops $shops)
+    {
+        $listShop = $shops->select()->get();
+
+        // tampilkan $listShop dalam foreach
+        foreach ($listShop as &$shop) {
+            // get fullname data
+            $fullname = User::select('full_name')->where('id_user', $shop->id_user)->first();
+
+            // data full name ditambahkan ke $shop
+            $shop->owner_name = $fullname->full_name;
+        }
+
+        return response()->json(['status' => 'success', 'message' => 'Data didapatkan', 'data' => $listShop], 200);
+    }
+
 
     public function prepareCreate(Request $request, Shops $shop)
     {
@@ -26,7 +44,7 @@ class ShopController extends Controller
                 'shop_name' => 'required|min:4|max:50',
                 'description' => 'nullable|max:500',
                 'benchmark' => 'required|min:4|max:100',
-                'photo' => 'required',
+                'photo_file' => 'required',
             ],
             [
                 'id_user.required' => 'ID user tidak boleh kosong',
@@ -38,7 +56,7 @@ class ShopController extends Controller
                 'benchmark.required' => 'Benchmark tidak boleh kosong',
                 'benchmark.min' => 'Benchmark harus terdiri dari minimal 4 karakter',
                 'benchmark.max' => 'Benchmark harus terdiri dari maksimal 100 karakter',
-                'photo.required' => 'Photo tidak boleh kosong',
+                'photo_file.required' => 'Photo tidak boleh kosong',
                 'description.max' => 'Deskripsi harus terdiri dari maksimal 500 karakter',
             ]
         );
@@ -55,7 +73,7 @@ class ShopController extends Controller
         $shop->shop_name = $request->input('shop_name');
         $shop->description = $request->input('description');
         $shop->benchmark = $request->input('benchmark');
-        $shop->photo = $request->input('photo');
+        $shop->photo = $request->input('photo_file');
 
         // menyimpan data
         if ($shop->save()) {
@@ -188,15 +206,105 @@ class ShopController extends Controller
         });
     }
 
+    public function saveShopPhoto2(Request $request)
+    {
+        try {
+            $photo = $request->file('photo');
+
+            // Mengecek apakah file foto shop valid
+            if ($photo && $photo->isValid()) {
+                // Mendapatkan format gambar
+                $extension = $photo->getClientOriginalExtension();
+                // Mengubah nama foto shop
+                $fotoShop = time() . '.' . $extension;
+                // Menyimpan foto shop
+                if (app()->environment('local')) {
+                    $photo->move(public_path('shops/'), $fotoShop);
+                } else {
+                    $isMoved = $photo->move(public_path(base_path('../public_html/public/shops/')), $fotoShop);
+                    if (!$isMoved) {
+                        return response()->json(['status' => 'error', 'message' => 'Failed to upload the photo.']);
+                    }
+                }
+                // Jika foto shop berhasil disimpan
+                $filenamePhoto = $fotoShop;
+
+                // Berhasil upload, kembalikan response success
+                return response()->json(['status' => 'success', 'message' => 'Photo uploaded successfully.', 'filename' => $filenamePhoto]);
+            } else {
+                // Jika $photo bukan file yang valid
+                return response()->json(['status' => 'error', 'message' => 'The photo is not valid.']);
+            }
+        } catch (\Exception $e) {
+            $filenamePhoto = 'shop.jpg';
+            return response()->json(['status' => 'error', 'message' => 'Failedd to upload the photo.']);
+        }
+    }
+
+    public function saveShopPhoto(Request $request)
+    {
+        $photo = $request->file('photo');
+
+        // Mengecek apakah file foto produk valid
+        if ($photo && $photo->isValid()) {
+            // Mendapatkan format gambar
+            $extension = $photo->getClientOriginalExtension();
+            // Mengubah nama foto produk
+            $fotoProduk = time() . '.' . $extension;
+            // Menyimpan foto produk
+            if (app()->environment('local')) {
+                $photo->move(public_path('prods/'), $fotoProduk);
+            } else {
+                $isMoved = $photo->move(public_path(base_path('../public_html/public/prods/')), $fotoProduk);
+                if (!$isMoved) {
+                    return ['status' => 'error', 'message' => 'Gagal menyimpan foto produk'];
+                }
+            }
+            // Jika foto produk berhasil disimpan
+            return ['status' => 'success', 'message' => 'Foto produk berhasil disimpan', 'data' => ['filename' => $fotoProduk]];
+        } else {
+            // Jika $photo bukan file yang valid
+            return ['status' => 'error', 'message' => 'File foto tidak valid atau tidak ditemukan'];
+        }
+    }
+
+
     public function createShop(Request $request, Shops $shop)
     {
-        $idUser = $request->input('id_user');
+        $email = $request->input('email');
         $phoneNumber = $request->input('phone_number');
+        $request->input('id_user');
         $request->input('shop_name');
         $request->input('description');
         $request->input('benchmark');
         $request->input('operational');
-        $request->input('photo');
+        $request->file('photo');
+        $filenamePhoto = $request->input('photo_file', 'shop.jpg');
+
+        // validasi data produk
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'photo' => 'required|file|image|max:512',
+        ], [
+            'email' => 'Email tidak valid.',
+            'photo.required' => 'Foto produk tidak boleh kosong.',
+            'photo.max' => 'Ukuran foto produk tidak boleh lebih dari 512 kb',
+            'photo.image' => 'File harus berupa gambar.',
+        ]);
+        // cek validasi
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'message' => $validator->errors()->first()], 400);
+        }
+
+        // get id user
+        $idUser = User::select('id_user')
+            ->where('email', $email)
+            ->first();
+        if (is_null($idUser)) {
+            return response()->json(['status' => 'error', 'message' => 'User tidak ditemukan'], 404);
+        }
+        // save id user
+        $idUser = $idUser->id_user;
 
         // cek user sudah punya toko atau belum
         $isExistId = $shop::select('id_user')
@@ -213,45 +321,90 @@ class ShopController extends Controller
         } else if ($isExistPhone) {
             return response()->json(['status' => 'error', 'message' => 'Nomor HP Sudah terdaftar'], 400);
         } else {
-            // prepare to save data
-            $result = $this->prepareCreate($request, $shop);
-            // jika data gagal disimpan
-            if ($result['status'] === 'error') {
-                return response()->json(['status' => 'error', 'message' => $result['message']], 400);
-            }
-            // jika data berhasil disimpan
-            else {
-                // get data toko
-                $shopData = $shop->select()->where('id_user', '=', $idUser)
-                    ->limit(1)->first();
-                // generate table name for shop
-                $tableId = 'sp_' . $shopData->id_shop . '_';
-                $tableProduct = $tableId . 'prod';
-                $tableReview = $tableId . 'rvw';
-                $tableComplain = $tableId . 'comp';
-                $tablePromo = $tableId . 'promo';
-                $tableTransaction = $tableId . 'trx';
-                $tabelTransacDetail = $tableId . 'trx_dtl';
 
-                // create table product
-                $this->createTableProduct($tableProduct);
+            try {
+                $photo = $request->file('photo');
 
-                // create table promo
-                $this->createTablePromo($tablePromo, $tableProduct);
+                // Mengecek apakah file foto shop valid
+                if ($photo && $photo->isValid()) {
+                    // Mendapatkan format gambar
+                    $extension = $photo->getClientOriginalExtension();
+                    // Mengubah nama foto shop
+                    $fotoShop = time() . '.' . $extension;
+                    // Menyimpan foto shop
+                    if (app()->environment('local')) {
+                        $photo->move(public_path('shops/'), $fotoShop);
+                    } else {
+                        $isMoved = $photo->move(public_path(base_path('../public_html/public/shops/')), $fotoShop);
+                        if (!$isMoved) {
+                            return response()->json(['status' => 'error', 'message' => 'Failed to upload the photo.']);
+                        }
+                    }
+                    // Jika foto shop berhasil disimpan
+                    $filenamePhoto = $fotoShop;
+                    // Duplikat objek $request
+                    $newRequest = $request->duplicate();
+                    // Menambahkan data baru ke dalam duplikat
+                    $newRequest->merge(['id_user' => $idUser, 'photo_file' => $filenamePhoto]);
 
-                // create table transaction
-                $this->createTableTransaction($tableTransaction);
+                    // prepare to save data
+                    $result = $this->prepareCreate($newRequest, $shop);
+                    // jika data gagal disimpan
+                    if ($result['status'] === 'error') {
+                        return response()->json(['status' => 'error', 'message' => $result['message']], 400);
+                    }
+                    // jika data berhasil disimpan
+                    else {
+                        // get data toko
+                        $shopData = $shop->select()->where('id_user', '=', $idUser)
+                            ->limit(1)->first();
+                        // generate table name for shop
+                        $tableId = 'sp_' . $shopData->id_shop . '_';
+                        $tableProduct = $tableId . 'prod';
+                        $tableReview = $tableId . 'rvw';
+                        $tableComplain = $tableId . 'comp';
+                        $tablePromo = $tableId . 'promo';
+                        $tableTransaction = $tableId . 'trx';
+                        $tabelTransacDetail = $tableId . 'trx_dtl';
 
-                // create table transaction detail
-                $this->createTableTransactionDetail($tabelTransacDetail, $tableTransaction, $tableProduct);
+                        // create table product
+                        $this->createTableProduct($tableProduct);
 
-                // create table review
-                $this->createTableReview($tableReview, $tableProduct, $tableTransaction);
+                        // create table promo
+                        $this->createTablePromo($tablePromo, $tableProduct);
 
-                // create table complain
-                $this->createTableComplain($tableComplain, $tableProduct, $tableTransaction);
+                        // create table transaction
+                        $this->createTableTransaction($tableTransaction);
 
-                return response()->json(['status' => 'succcess', 'message' => 'Toko berhasil dibuat', 'data' => $shopData,], 200);
+                        // create table transaction detail
+                        $this->createTableTransactionDetail($tabelTransacDetail, $tableTransaction, $tableProduct);
+
+                        // create table review
+                        $this->createTableReview($tableReview, $tableProduct, $tableTransaction);
+
+                        // create table complain
+                        $this->createTableComplain($tableComplain, $tableProduct, $tableTransaction);
+
+                        // return response()->json(['status' => 'succcess', 'message' => 'Toko berhasil dibuat', 'data' => $shopData,], 200);
+
+                        // tampilkan notif 'Toko Berhasil Ditambahkan'
+
+
+
+                        $request->session()->put('success', 'Toko Berhasil Ditambahkan');
+
+                        $listShop = ShopController::listOfShop(new Shops())->getData()->data;
+                        
+                        return view('layouts.tambah', ['data' => $listShop]);
+                        
+                    }
+                } else {
+                    // Jika $photo bukan file yang valid
+                    return response()->json(['status' => 'error', 'message' => 'The photo is not valid.']);
+                }
+            } catch (\Exception $e) {
+                $filenamePhoto = 'shop.jpg';
+                return response()->json(['status' => 'error', 'message' => 'Failedd to upload the photo.']);
             }
         }
     }
@@ -370,19 +523,22 @@ class ShopController extends Controller
         }
     }
 
-    public function deleteShop(Request $request, Shops $shop)
+    public function deleteShop($idShop) // Mengambil ID toko dari parameter route
     {
-        $idShop = $request->input('id_shop');
+        $shop = new Shops();
 
         // cek data exist atau engak
         $isExist = $shop->select('id_shop')
             ->where('id_shop', '=', $idShop)
             ->limit(1)->exists();
 
+            
+
         // jika data exist
         if ($isExist) {
             // generate table name for shop
             $tableId = 'sp_' . $idShop . '_';
+            // return response()->json(['id_shop' =>$tableId ]);
             $tableProduct = $tableId . 'prod';
             $tableReview = $tableId . 'rvw';
             $tableComplain = $tableId . 'comp';
@@ -390,9 +546,9 @@ class ShopController extends Controller
             $tableTransaction = $tableId . 'trx';
             $tabelTransacDetail = $tableId . 'trx_dtl';
 
-            // deleting child table
+            // // deleting child table
             Schema::dropIfExists($tabelTransacDetail);
-            Schema::dropIfExists($tableTransaction);
+            // Schema::dropIfExists($tableTransaction);
             Schema::dropIfExists($tableReview);
             Schema::dropIfExists($tablePromo);
             Schema::dropIfExists($tableComplain);
@@ -402,7 +558,12 @@ class ShopController extends Controller
             $delete = $shop->select('id_shop')->where('id_shop', '=', $idShop)->delete();
 
             if ($delete) {
-                return response()->json(['status' => 'success', 'message' => 'Toko berhasil dihapus'], 200);
+                $request = new Request();
+                // $request->session()->put('success', 'Toko Berhasil Ditambahkan');
+
+                $listShop = ShopController::listOfShop(new Shops())->getData()->data;
+                
+                return view('layouts.tambah', ['data' => $listShop]);
             } else {
                 return response()->json(['status' => 'error', 'message' => 'Toko gagal dihapus'], 400);
             }
