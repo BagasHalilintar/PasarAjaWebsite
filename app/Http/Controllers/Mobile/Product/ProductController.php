@@ -213,22 +213,31 @@ class ProductController extends Controller
         // save foto produk
         $photoSaveResponse = $this->saveProductPhoto($request);
 
+        $newData = [
+            'id_shop' => $idShop,
+            'id_cp_prod' => $idCategory,
+            'product_name' => $productName,
+            'description' => $description,
+            'settings' => $settings,
+            'unit' => $unit,
+            'selling_unit' => $sellingUnit,
+            'price' => $price,
+            'photo' => $photoSaveResponse['data']['filename'],
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ];
+
         // jika foto produk berhasil disimpan
         if ($photoSaveResponse['status'] == 'success') {
             // simpan data produk
-            $insertData = DB::table($tableName)->insert([
-                'id_shop' => $idShop,
-                'id_cp_prod' => $idCategory,
-                'product_name' => $productName,
-                'description' => $description,
-                'settings' => $settings,
-                'unit' => $unit,
-                'selling_unit' => $sellingUnit,
-                'price' => $price,
-                'photo' => $photoSaveResponse['data']['filename'],
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
+            $insertData = DB::table($tableName)->insert($newData);
+
+            // Menyimpan data ke Firestore
+            $firestore = app('firebase.firestore')
+                ->database()
+                ->collection("0products")
+                ->newDocument();
+            $firestore->set($newData);
 
             // cek data berhasil disimpan atau tidak
             if ($insertData) {
@@ -897,5 +906,80 @@ class ProductController extends Controller
         } else {
             return response()->json(['status' => 'error', 'message' => 'Produk gagal dihapus'], 400);
         }
+    }
+
+    public function toFire(Request $request, ProductReviewController $review)
+    {
+        $idShop = $request->input('id_shop');
+
+        $prodData = $this->allProducts($request)->getData()->data;
+
+        foreach ($prodData as $prod) {
+            // Mengonversi objek stdClass menjadi array
+            $prodArray = (array) $prod;
+
+            // get review data
+            $newReq = new Request();
+            $newReq->merge([
+                "id_product" => $prodArray["id_product"],
+                "id_shop" => $prodArray["id_shop"],
+            ]);
+            $rvwData = $review->getOnlyReviews($newReq)->getData()->data;
+
+            // create new data
+            $newData = [
+                "id_product" => $prodArray["id_product"],
+                "product_name" => $prodArray["product_name"],
+                "id_shop" => $prodArray["id_shop"],
+                "id_cp_prod" => $prodArray["id_cp_prod"],
+                "photo" => $prodArray["photo"],
+                "rating" => $rvwData->rating,
+                "total_review" => $rvwData->total_review,
+            ];
+
+            // Menyimpan data ke Firestore
+            $firestore = app('firebase.firestore')
+                ->database()
+                ->collection("0products")
+                ->newDocument();
+            $firestore->set($newData);
+        }
+
+        return response()->json(['status' => 'success', 'message' => 'Controller Success', 'data' => $prodData], 200);
+    }
+
+    public function testAll()
+    {
+        // generate table name
+        $shopTables = DB::table('0shops')->pluck('id_shop')->map(function ($id) {
+            return 'sp_' . $id . '_prod';
+        });
+
+        // data yang diambil
+        $dataSelected = [
+            'id_product',
+            'id_shop',
+            'id_cp_prod',
+            'product_name',
+            'selling_unit',
+            'unit',
+            'total_sold',
+            'price', DB::raw("CONCAT('" . asset('prods') . "/', photo) AS photo"),
+        ];
+
+        // membuat query
+        $firstTable = $shopTables->shift();
+        $query = DB::table(DB::raw("$firstTable as prod"))
+            ->select($dataSelected);
+
+        // mendapatkan semua data
+        foreach ($shopTables as $table) {
+            $query->union(DB::table($table)->select($dataSelected));
+        }
+
+        // mendapatkan data dari union
+        $products = $query->get();
+
+        return $products;
     }
 }
