@@ -77,6 +77,48 @@ class ProductReviewController extends Controller
         }
     }
 
+    public function getOnlyReviews(Request $request)
+    {
+        $idShop = $request->input('id_shop');
+        $idProd = $request->input('id_product');
+
+        // generate table product and review
+        $tableRvw = $this->generateTableReview($idShop);
+
+        // cek apakah toko ada atau tidak didalam database
+        $isExistShop = $this->isExistShop($idShop);
+        if ($isExistShop['status'] === 'error') {
+            return response()->json(['status' => 'error', 'message' => $isExistShop['message']], 400);
+        }
+
+        // menghitung rating dari produk
+        $productAverageRating = DB::table($tableRvw)
+            ->select(DB::raw('ROUND(AVG(star), 1) as average_rating'))
+            ->where('id_product', $idProd)
+            ->first();
+
+        // mendapatkan total review
+        $totalReviews = DB::table($tableRvw)
+            ->where('id_product', $idProd)
+            ->count();
+
+        // mendapatkan data rating produk
+        $averageRating = $productAverageRating ? floatval($productAverageRating->average_rating) : 0.0; // konversi ke double
+
+        // jika tidak ada review, set rating rata-rata menjadi 0
+        if ($averageRating === 0.0) {
+            $averageRating = 0.0;
+        }
+
+        $ratingData = [
+            'rating' => $averageRating,
+            'total_review' => $totalReviews,
+        ];
+
+        return response()->json(['status' => 'success', 'message' => 'data didapatkan', 'data' => $ratingData], 200);
+    }
+
+
     /// get rating and user review
     public function getReviews(Request $request)
     {
