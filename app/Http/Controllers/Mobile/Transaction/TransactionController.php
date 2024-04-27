@@ -428,7 +428,7 @@ class TransactionController extends Controller
 
         // convert $takenDate to datetime
         $tDate = new DateTime($takenDate);
-        
+
         // set time ke 0
         $currentDate->setTime(0, 0, 0);
         $tDate->setTime(0, 0, 0);
@@ -605,6 +605,21 @@ class TransactionController extends Controller
         }
     }
 
+    public function testTrx(Request $request)
+    {
+        $idUser = $request->input('id_user');
+        $idShop = $request->input('id_shop');
+        $orderCode = $request->input('order_code');
+
+        $addData = $this->addToTrx($idUser, $idShop, $orderCode);
+
+        if ($addData) {
+            return response()->json(['status' => 'success', 'message' => 'Trx Ditambahkan'], 200);
+        } else {
+            return response()->json(['status' => 'success', 'message' => 'Trx Gagal Ditambahkan'], 400);
+        }
+    }
+
     private function addToTrx($idUser, $idShop, $orderCode)
     {
         $collection = "us_" . $idUser . "_trx";
@@ -641,6 +656,32 @@ class TransactionController extends Controller
             // convert trx data to array
             $trxDataArray = json_decode(json_encode($trxData->data), true);
 
+            foreach ($trxDataArray['details'] as &$detail) {
+
+                // didalam $detail terdapat data product_name, product_photo
+                unset($detail['product_name']);
+
+                // Proses query Firestore
+                $fireProd = app('firebase.firestore')->database();
+                $collectionProd = $fireProd->collection('0products');
+            
+                // Mendapatkan data produk yang sesuai dengan transaksi
+                $prodData = $collectionProd
+                                ->where('id_shop', '==', $idShop)
+                                ->where('id_product', '==', $detail['id_product'])
+                                ->limit(1)
+                                ->documents();
+            
+                // Mengambil data produk dari QuerySnapshot jika ada
+                $product = null;
+                foreach ($prodData as $document) {
+                    $product = $document->data();
+                }
+            
+                // Menyimpan data produk dalam $detail['product']
+                $detail['product'] = $product;
+            }            
+            
             // save trx data to firebase
             $newDocument->set($trxDataArray);
 

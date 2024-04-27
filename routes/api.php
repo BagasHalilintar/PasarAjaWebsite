@@ -152,10 +152,11 @@ Route::group(['prefix' => '/m'], function () {
         Route::put('/ittrx', [TransactionController::class, 'inTakingTrx']);
         Route::put('/sbtTrx', [TransactionController::class, 'submittedTrx']);
         Route::put('/fstrx', [TransactionController::class, 'finishTrx']);
+        Route::post('/frtrx', [TransactionController::class, 'testTrx']);
     });
 
     Route::group(['prefix' => '/utrx'], function () {
-        Route::get('list', [UserTransactionController::class, 'listOfTrx']);
+        Route::get('list', [UserTransactionController::class, 'listOfTrxNew']);
     });
 
     Route::group(['prefix' => '/page'], function () {
@@ -195,6 +196,7 @@ Route::group(['prefix' => '/m'], function () {
 });
 
 Route::group(['prefix' => 'shop'], function () {
+    Route::get('/list', [ShopController::class, 'listOfShop']);
     Route::post('/create', [ShopController::class, 'createShop']);
     Route::put('/update', [ShopController::class, 'updateShop']);
     Route::put('/operational', [ShopController::class, 'updateOperational']);

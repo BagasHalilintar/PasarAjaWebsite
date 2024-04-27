@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+<<<<<<< HEAD
 use App\Models\Event;
 use App\Models\Informasi;
+=======
+use App\Http\Controllers\Website\ShopController;
+use App\Models\Shops;
+>>>>>>> 6ef0091edfb41fad5cee99ead3d838281ad7ce8a
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -23,8 +28,9 @@ class LayoutsController extends Controller
         return view('layouts.event',compact('dataEvent'));
     }
 
-    public function tambah(){
-        return view('layouts.tambah');
+    public function tambah(ShopController $shopController, Shops $shops){
+        $listShop = $shopController->listOfShop($shops)->getData()->data;
+        return view('layouts.tambah', ['data' => $listShop]);
     }
     public function profil(){
         return view('layouts.profil');
