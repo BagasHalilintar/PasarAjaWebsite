@@ -49,4 +49,6 @@ class UploadEventController extends Controller{
 
         return redirect()->back()->with('success', 'Event berhasil dihapus');
     }
+
+    
 }

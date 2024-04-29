@@ -234,7 +234,7 @@
                 <div class="card" style= "background-color: #0D4A31; color: white;">
                     <div class="card-body">
                       <p class="mb-4">Jumlah Toko</p>
-                      <p class="fs-30 mb-2">20</p>
+                      <p class="fs-30 mb-2">{{ $totaltambah }}</p>
                       
                     </div>
                   </div>

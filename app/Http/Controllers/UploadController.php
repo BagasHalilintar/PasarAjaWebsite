@@ -6,7 +6,8 @@ use App\Models\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class UploadController extends Controller{
+class 
+UploadController extends Controller{
     public function index() {
 
         $inputInformasi = Informasi::get();

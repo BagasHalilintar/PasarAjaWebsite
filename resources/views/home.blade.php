@@ -16,23 +16,38 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="{{asset ('boot/css/styles.css')}}" rel="stylesheet" />
-        <link href="{{asset ('boot/css/landing.css')}}" rel="stylesheet" />
+        <link href="{{asset ('boot/css/landing.css')}}" rel="stylesheet" /> 
+        <style>
+            .image-container {
+    width: 500px; /* Sesuaikan dengan lebar yang diinginkan */
+    height: 300px; /* Sesuaikan dengan tinggi yang diinginkan */
+    margin-bottom: 20px; /* Atur margin antara gambar */
+    position: relative; /* Atur posisi relatif untuk menempatkan tombol di atas gambar */
+}
+
+.row-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Hindari distorsi gambar dengan mengisi ruang yang tersedia */
+}
+
+        </style>
     </head>
     <body id="page-top">
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
             <div class="container">
-                <a class="navbar-brand" href="#page-top"><img src="assets/img/navbar-logo.svg" alt="..." /></a>
+                <a class="navbar-brand" href="#page-top"><img id="logo-1" src="{{asset('img/Logo1.png')}}" alt="..." /></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
                     <i class="fas fa-bars ms-1"></i>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0" id="nav-text">
-                        <li class="nav-item"><a id="nav-text1" href="#services">Home</a></li>
-                        <li class="nav-item"><a id="nav-text2" href="#portfolio">Informasi</a></li>
+                        <li class="nav-item"><a id="nav-text1" href="#home">Home</a></li>
+                        <li class="nav-item"><a id="nav-text2" href="#informasi">Informasi</a></li>
                         <li class="nav-item"><a id="nav-text3" href="#about">Promo</a></li>
-                        <li class="nav-item"><a id="nav-text4" href="#team">Event</a></li>
+                        <li class="nav-item"><a id="nav-text4" href="#event">Event</a></li>
                         <li class="nav-item"><a id="nav-text5" href="#contact">Contact</a></li>
                         <a class="btn btn-outline-success mb-3" id="sign-in" href="{{ route('login') }}">Sign In</a>
 
@@ -41,7 +56,7 @@
             </div>
         </nav>
         <!-- Masthead-->
-        <header class="masthead">
+        <header class="masthead" id="home">
             <div class="container d-flex justify-content-end">
                 <div class="row">
                     <div class="col-xxl-12">
@@ -64,8 +79,8 @@
             <img src="{{asset('img/fresh.png')}}" alt="" id="row-img">
         </div>
 
-        <!-- Services-->
-        <section class="page-section" id="services">
+        <!-- informasis-->
+        <section class="page-section" id="informasi">
             <div class="container">
                  <div class="text-center">
                     <h2 class="section-heading text-uppercase">Informasi Terbaru</h2>
@@ -73,19 +88,17 @@
                  </div>
                  <div class="row text-center">
                   <div class="d-flex mt-5" style="gap:15px">
-                    <div class="image-container">
-                        <img src="{{asset('img/pasar1.png')}}" alt="" class="row-img">
-                        <button class="btn">INFORMASI</button>
-                    </div>
-                    <div class="image-container">
-                        <img src="{{asset('img/pasar2.png')}}" alt="" class="row-img">
-                        <button class="btn">INFORMASI</button>
-                    </div>
-                    <div class="image-container">
-                        <img src="{{asset('img/pasar3.png')}}" alt="" class="row-img">
-                        <button class="btn">INFORMASI</button>
-                    </div>
-                  </div>
+                  @foreach ($dataInformasi as $dii)
+<div class="image-container">
+    <img src="{{ url('/data_informasi/'.$dii->foto) }}" alt="" class="row-img">
+    <!-- <button class="btn">{{ $dii->judul }}</button> -->
+        <div class="text-center">
+                    <h5 class="">{{ $dii->judul }}</h4>
+                    <p class="text" id="text-informasi">{{ $dii->deskripsi }}</p>
+                </div>
+</div>
+@endforeach
+
 
                    
                 </div>
@@ -143,7 +156,7 @@
             </div>
         </section>
 
-        <section class="page-section" id="about">
+        <section class="page-section" id="event">
             <div class="container">
                 <div class="text-center">
                     <h2 class="section-heading text-uppercase">Event</h2>
@@ -151,17 +164,17 @@
                 </div>
                 <div class="row text-center">
         <div class="d-flex mt-5" style="gap:15px">
+        @foreach ($dataEvent as $key => $dee)
             <div class="image-container">
-                <img src="{{asset('img/event1.png')}}" alt="" class="row-img">
-                <div class="label">1</div>
+            <img src="{{ url('/data_event/'.$dee->foto) }}" alt="" class="row-img">
+                <div class="label">{{ $key + 1 }}</div>
                 <div class="text-center">
-                    <h5 class="">Jalan Sehat</h4>
-                    <p class="text" id="text-event">Pada hari minggu akan diadakan acara</p>
-                    <p class="text" id="text-event">jalan sehat dalam rangka menyambut</p>
-                    <p class="text" id="text-event">bapak bupati yang baru</p>
+                    <h5 class="">{{ $dee->judul }}</h4>
+                    <p class="text" id="text-event">{{ $dee->deskripsi }}</p>
                 </div>
             </div>
-            <div class="image-container">
+            @endforeach
+            <!-- <div class="image-container">
                 <img src="{{asset('img/event2.png')}}" alt="" class="row-img">
                 <div class="label">2</div>
                 <div class="text-center">
@@ -180,7 +193,7 @@
                     <p class="text" id="text-event">pasar wage akan mengundang bintang</p>
                     <p class="text" id="text-event">tamu Guyon Waton</p>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
         </section>

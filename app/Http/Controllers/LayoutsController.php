@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-<<<<<<< HEAD
+
 use App\Models\Event;
 use App\Models\Informasi;
-=======
+
 use App\Http\Controllers\Website\ShopController;
 use App\Models\Shops;
->>>>>>> 6ef0091edfb41fad5cee99ead3d838281ad7ce8a
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -17,9 +17,12 @@ class LayoutsController extends Controller
     public function index(){
         $totalinformasi = Informasi::count();
         $totalevent = Event::count();
+        $totaltambah = Shops::count();
+        $totalevent = Event::count();
         return view('layouts.index', [
             'totalinformasi' =>  $totalinformasi, 
             'totalevent' =>  $totalevent, 
+            'totaltambah' =>  $totaltambah, 
         ]);
     }
 

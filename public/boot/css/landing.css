@@ -175,3 +175,8 @@ text-decoration: underline;
     height: 80%; /* Tinggi iframe */
     border: 0;
 }
+
+#logo-1{
+    width: 70px;
+    height: 80px;
+}
