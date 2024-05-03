@@ -25,12 +25,27 @@ class ShopController extends Controller
             $fullname = User::select('full_name')->where('id_user', $shop->id_user)->first();
 
             // data full name ditambahkan ke $shop
-            $shop->owner_name = $fullname->full_name;
+            $shop->owner_name = ucwords($fullname->full_name);
+
+            $shop->photo = asset('shops/' . $shop->photo);
+
+            $tableProd = 'sp_' . $shop->id_shop . '_prod';
+
+            $result = DB::table($tableProd)
+            ->select(
+                DB::raw('COUNT(id_product) as total_product'),
+                DB::raw('SUM(total_sold) as total_sold')
+            )
+            ->first();
+        
+            if ($result) {
+                $shop->total_product = intval($result->total_product);
+                $shop->total_sold = intval($result->total_sold);
+            }
         }
 
         return response()->json(['status' => 'success', 'message' => 'Data didapatkan', 'data' => $listShop], 200);
     }
-
 
     public function prepareCreate(Request $request, Shops $shop)
     {
@@ -394,9 +409,8 @@ class ShopController extends Controller
                         $request->session()->put('success', 'Toko Berhasil Ditambahkan');
 
                         $listShop = ShopController::listOfShop(new Shops())->getData()->data;
-                        
+
                         return view('layouts.tambah', ['data' => $listShop]);
-                        
                     }
                 } else {
                     // Jika $photo bukan file yang valid
@@ -532,7 +546,7 @@ class ShopController extends Controller
             ->where('id_shop', '=', $idShop)
             ->limit(1)->exists();
 
-            
+
 
         // jika data exist
         if ($isExist) {
@@ -562,7 +576,7 @@ class ShopController extends Controller
                 // $request->session()->put('success', 'Toko Berhasil Ditambahkan');
 
                 $listShop = ShopController::listOfShop(new Shops())->getData()->data;
-                
+
                 return view('layouts.tambah', ['data' => $listShop]);
             } else {
                 return response()->json(['status' => 'error', 'message' => 'Toko gagal dihapus'], 400);
@@ -570,6 +584,24 @@ class ShopController extends Controller
         } else {
             return response()->json(['status' => 'error', 'message' => 'ID Toko tidak ditemukan'], 400);
         }
+    }
+
+    public function getShopDataOnly(Request $request, Shops $shops)
+    {
+        $idShop = $request->input('id_shop');
+
+        $shopData = $shops
+            ->select()
+            ->where('id_shop', $idShop)
+            ->first();
+
+        if (!$shopData) {
+            return response()->json(['status' => 'error', 'message' => 'Shop not found'], 404);
+        }
+
+        $shopData->photo = asset('shops/' . $shopData->photo);
+
+        return response()->json(['status' => 'success', 'message' => 'data dapat',  'data' => $shopData], 200);
     }
 
     public function getShopData(Request $request, Shops $shops)
@@ -586,6 +618,21 @@ class ShopController extends Controller
         }
 
         $shopData->photo = asset('shops/' . $shopData->photo);
+
+        $tableProd = 'sp_' . $idShop . '_prod';
+
+        $result = DB::table($tableProd)
+        ->select(
+            DB::raw('COUNT(id_product) as total_product'),
+            DB::raw('SUM(total_sold) as total_sold')
+        )
+        ->first();
+    
+        if ($result) {
+            $shopData->total_product = intval($result->total_product);
+            $shopData->total_sold = intval($result->total_sold);
+        }
+
         return response()->json(['status' => 'success', 'message' => 'data dapat',  'data' => $shopData], 200);
     }
 

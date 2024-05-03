@@ -766,6 +766,8 @@ class ProductController extends Controller
         $idShop = $request->input('id_shop');
         $idProd = $request->input('id_product');
 
+        // echo 'id product from data : ' . $request->input('id_product');
+
         // generate table name
         $tableName = $this->generateTableName($idShop);
 
@@ -785,9 +787,12 @@ class ProductController extends Controller
         $product = DB::table(DB::raw("$tableName as prod"))
             ->join(DB::raw("0product_categories as ctg"), "ctg.id_cp_prod", "prod.id_cp_prod")
             ->select("prod.*", "ctg.category_name")
+            ->where('prod.id_product', $idProd)
+            ->where('prod.id_shop', $idShop)
             ->get()->first();
 
         // update product photo
+        $product->product_name = ucwords($product->product_name);
         $product->photo = asset('prods/' . $product->photo);
 
         return response()->json(['status' => 'success', 'message' => 'Data didapatkan', 'data' => $product], 200);
@@ -908,41 +913,65 @@ class ProductController extends Controller
         }
     }
 
-    public function toFire(Request $request, ProductReviewController $review)
+    public function toFire(Request $request, ProductReviewController $review, Shops $shops)
     {
-        $idShop = $request->input('id_shop');
 
-        $prodData = $this->allProducts($request)->getData()->data;
+        // prepare products
+        $firestore = app('firebase.firestore');
+        $collectionRef = $firestore->database()->collection("0products");
+        // menghapus semua data dalam collection
+        $documents = $collectionRef->documents();
+        foreach ($documents as $document) {
+            $document->reference()->delete();
+        }
 
-        foreach ($prodData as $prod) {
-            // Mengonversi objek stdClass menjadi array
-            $prodArray = (array) $prod;
+        $listShop = $shops->select()->get();
 
-            // get review data
-            $newReq = new Request();
-            $newReq->merge([
-                "id_product" => $prodArray["id_product"],
-                "id_shop" => $prodArray["id_shop"],
-            ]);
-            $rvwData = $review->getOnlyReviews($newReq)->getData()->data;
+        // Tampilkan $listShop dalam foreach
+        foreach ($listShop as $shop) {
+            // Buat Request baru dengan nama $newRequest dengan isi datanya is_shop = $shop->id_shop
+            $newRequest = new Request(['id_shop' => $shop->id_shop]);
 
-            // create new data
-            $newData = [
-                "id_product" => $prodArray["id_product"],
-                "product_name" => $prodArray["product_name"],
-                "id_shop" => $prodArray["id_shop"],
-                "id_cp_prod" => $prodArray["id_cp_prod"],
-                "photo" => $prodArray["photo"],
-                "rating" => $rvwData->rating,
-                "total_review" => $rvwData->total_review,
-            ];
+            // Panggil fungsi allProducts dengan parameter $newRequest
+            $response = $this->allProducts($newRequest);
 
-            // Menyimpan data ke Firestore
-            $firestore = app('firebase.firestore')
-                ->database()
-                ->collection("0products")
-                ->newDocument();
-            $firestore->set($newData);
+            if ($response->getStatusCode() === 200) {
+                $prodData = $response->getData()->data;
+
+                foreach ($prodData as $prod) {
+                    // Mengonversi objek stdClass menjadi array
+                    $prodArray = (array) $prod;
+
+                    // get review data
+                    $newReq = new Request();
+                    $newReq->merge([
+                        "id_product" => $prodArray["id_product"],
+                        "id_shop" => $prodArray["id_shop"],
+                    ]);
+                    $rvwData = $review->getOnlyReviews($newReq)->getData()->data;
+
+                    // create new data
+                    $newData = [
+                        "id_product" => $prodArray["id_product"],
+                        "product_name" => $prodArray["product_name"],
+                        "id_shop" => $prodArray["id_shop"],
+                        "id_cp_prod" => $prodArray["id_cp_prod"],
+                        "settings" => $prodArray["settings"],
+                        "photo" => $prodArray["photo"],
+                        "total_sold" => $prodArray["total_sold"],
+                        "price" => $prodArray['price'],
+                        "rating" => $rvwData->rating,
+                        "total_review" => $rvwData->total_review,
+                    ];
+
+                    // Menyimpan data ke Firestore
+                    $firestore = app('firebase.firestore')
+                        ->database()
+                        ->collection("0products")
+                        ->newDocument();
+                    $firestore->set($newData);
+                }
+            }
         }
 
         return response()->json(['status' => 'success', 'message' => 'Controller Success', 'data' => $prodData], 200);

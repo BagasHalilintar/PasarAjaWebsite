@@ -173,8 +173,8 @@ class ProductReviewController extends Controller
         }
 
         $ratingData = [
-            'rating' => $averageRating,
-            'total_review' => $totalReviews,
+            'rating' => doubleval($averageRating), // jadikan double
+            'total_review' => intval($totalReviews),
             'reviewers' => $reviews,
         ];
 
