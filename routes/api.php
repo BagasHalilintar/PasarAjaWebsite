@@ -15,6 +15,7 @@ use App\Http\Controllers\Mobile\Product\ProductComplainController;
 use App\Http\Controllers\Mobile\Product\ProductHistoryController;
 use App\Http\Controllers\Mobile\Product\ProductPromoController;
 use App\Http\Controllers\Mobile\Product\ProductReviewController;
+use App\Http\Controllers\Mobile\Product\UserProductController;
 use App\Http\Controllers\Mobile\Transaction\TransactionController;
 use App\Http\Controllers\Mobile\Transaction\UserTransactionController;
 use App\Http\Controllers\Website\ShopController;
@@ -156,7 +157,19 @@ Route::group(['prefix' => '/m'], function () {
     });
 
     Route::group(['prefix' => '/utrx'], function () {
-        Route::get('list', [UserTransactionController::class, 'listOfTrxNew']);
+        Route::get('/list', [UserTransactionController::class, 'listOfTrx']);
+        Route::get('/data', [UserTransactionController::class, 'dataTrx']);
+        Route::group(['prefix' => '/cart'], function() {
+            Route::get('/', [UserTransactionController::class, 'getAllCart']);
+            Route::post('/add', [UserTransactionController::class, 'addToCart']);
+            Route::delete('/delete', [UserTransactionController::class, 'removeCart']);
+        });
+    });
+
+    Route::group(['prefix' => '/uprod'], function () {
+        Route::get('/ctg', [UserProductController::class, 'getAllCategories']);
+        Route::get('/list', [UserProductController::class, 'getAllProducts']);
+        Route::get('/detail', [UserTransactionController::class, 'detailProduct']);
     });
 
     Route::group(['prefix' => '/page'], function () {

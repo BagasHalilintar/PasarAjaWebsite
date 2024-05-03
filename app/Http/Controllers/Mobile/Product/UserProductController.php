@@ -3,10 +3,27 @@
 namespace App\Http\Controllers\Mobile\Product;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Mobile\Category\CategoryController;
+use App\Models\ProductCategories;
 use Illuminate\Http\Request;
 
 class UserProductController extends Controller
 {
+
+    public function getAllCategories(CategoryController $categoryController, ProductCategories $productCategories)
+    {
+        // get categories
+        $categoryData = $categoryController->allCategories($productCategories)->getData();
+        if ($categoryData->status === 'success') {
+            $categories = $categoryData->data;
+        } else {
+            $categories = [];
+        }
+
+        return response()->json(['status' => 'success', 'message' => 'Data berhasil didapatkan', 'data' => $categories], 200);
+    }
+
+    
     public function getAllProducts()
     {
         try {
