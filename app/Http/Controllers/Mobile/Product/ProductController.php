@@ -913,7 +913,7 @@ class ProductController extends Controller
         }
     }
 
-    public function toFire(Request $request, ProductReviewController $review, Shops $shops)
+    public function toFire(Request $request, ProductReviewController $review, ProductPromoController $promo, Shops $shops)
     {
 
         // prepare products
@@ -950,18 +950,45 @@ class ProductController extends Controller
                     ]);
                     $rvwData = $review->getOnlyReviews($newReq)->getData()->data;
 
+                    // get settings data
+                    $settings = json_decode($prodArray["settings"], true);
+
+                    // get promo data
+                    $promoTemp = $promo->getPromo($newReq)->getData()->data;
+
+                    if (!empty($promoTemp)) {
+                        $promoData = [
+                            'promo_price' => $promoTemp->promo_price,
+                            'percentage' => $promoTemp->percentage,
+                            'start_date' => $promoTemp->start_date,
+                            'end_date' => $promoTemp->end_date,
+                        ];
+                    } else {
+                        $promoData = [
+                            'promo_price' => null,
+                            'percentage' => null,
+                            'start_date' => null,
+                            'end_date' => null,
+                        ];
+                    }
+
                     // create new data
                     $newData = [
                         "id_product" => $prodArray["id_product"],
                         "product_name" => $prodArray["product_name"],
                         "id_shop" => $prodArray["id_shop"],
                         "id_cp_prod" => $prodArray["id_cp_prod"],
-                        "settings" => $prodArray["settings"],
+                        "settings" => [
+                            "is_shown" => $settings['is_shown'],
+                            "is_recommended" => $settings['is_recommended'],
+                            "is_available" => $settings['is_available']
+                        ],
                         "photo" => $prodArray["photo"],
                         "total_sold" => $prodArray["total_sold"],
                         "price" => $prodArray['price'],
                         "rating" => $rvwData->rating,
                         "total_review" => $rvwData->total_review,
+                        "promo" => $promoData,
                     ];
 
                     // Menyimpan data ke Firestore
