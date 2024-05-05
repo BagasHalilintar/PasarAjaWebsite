@@ -142,45 +142,6 @@ class UserTransactionController extends Controller
         }
     }
 
-    public function detailProduct(Request $request, ShopController $shops,  ProductController $products, ProductReviewController $reviews)
-    {
-        $request->input('id_shop');
-        $request->input('id_product');
-
-        $rvwArray = [];
-
-        // get shop data
-        $responseShop = $shops->getShopData($request, new Shops());
-        if ($responseShop->getStatusCode() === 200) {
-            $shopData = $responseShop->getData()->data;
-        } else {
-            return response()->json(['status' => 'error', 'message' => 'toko tidak ditemukan'], 404);
-        }
-
-        // get prod data
-        // echo 'id product : ' . $request->input('id_product');
-        $responseProd = $products->dataProduct($request);
-        if ($responseProd->getStatusCode() === 200) {
-            $prodData = $responseProd->getData()->data;
-        } else {
-            return response()->json(['status' => 'error', 'message' => 'produk tidak ditemukan'], 404);
-        }
-
-        // get review data
-        $responseRvw = $reviews->getReviews($request);
-        if ($responseRvw->getStatusCode() === 200) {
-            $rvwData = $responseRvw->getData()->data;
-            $rvwArray = (array) $rvwData;
-        }
-
-        $data = [
-            'shop_data' => $shopData,
-            'product' => $prodData,
-            'rating' => $rvwArray,
-        ];
-
-        return response()->json(['status' => 'success', 'message' => 'data didapatkan', 'data' => $data], 200);
-    }
 
     public function getAllCart(Request $request, Shops $shops)
     {
@@ -201,14 +162,18 @@ class UserTransactionController extends Controller
             // membaca semua data dalam dokumen
             foreach ($documents as $document) {
 
+                // mendapatkan ID dokumen
+                $docId = $document->id();
+
                 // mendapatkan data dari dokumen
                 $docData = $document->data();
+                $docData['id_cart'] = $docId;
 
                 // get shop data
                 $shopData = $shops
-                ->select()
-                ->where('id_shop', $docData['id_shop'])
-                ->first();
+                    ->select()
+                    ->where('id_shop', $docData['id_shop'])
+                    ->first();
                 $docData['shop_data'] = $shopData;
 
                 // save data
@@ -367,7 +332,8 @@ class UserTransactionController extends Controller
         }
     }
 
-    public function removeCart(Request $request, ShopController $shops){
+    public function removeCart(Request $request, ShopController $shops)
+    {
         try {
             $idUser = $request->input('id_user');
             $idShop = $request->input('id_shop');
@@ -437,6 +403,30 @@ class UserTransactionController extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
+
+    // public function updateProductQuantity(Request $request)
+    // {
+    //     try {
+    //         $idUser = $request->input('id_user');
+    //         $idShop = $request->input('id_shop');
+    //         $idProduct = $request->input('id_product');
+    //         $newQuantity = $request->input('quantity');
+        
+    //         $collectionName = 'us_' . $idUser . '_cart';
+         
+    //         $firestore = app('firebase.firestore')->database();
+        
+    //         $query = $firestore->collection($collectionName);
+    //         $documents = $query->documents();
+        
+    //         return response()->json(['status' => 'error', 'message'=> 'data gagal diupdate', 'data'=>$documents], 400);
+    //     } catch (\Exception $e) {
+    //         // Tangkap dan tangani kesalahan di sini
+    //         return response()->json(['status' => 'error', 'message'=> 'terjadi kesalahan: ' . $e->getMessage()], 500);
+    //     }
+    // }
+    
+    
 }
 // $data = [
 //     "id_shop" => $idShop,
