@@ -138,6 +138,7 @@ Route::group(['prefix' => '/m'], function () {
             Route::get('/detail', [ProductPromoController::class, 'detailPromo']);
             Route::post('/create', [ProductPromoController::class, 'addPromo']);
             Route::put('/update', [ProductPromoController::class, 'updatePromo']);
+            Route::get('/data', [ProductPromoController::class, 'getPromo']);
             Route::delete('/delete', [ProductPromoController::class, 'deletePromo']);
         });
     });
@@ -163,13 +164,14 @@ Route::group(['prefix' => '/m'], function () {
             Route::get('/', [UserTransactionController::class, 'getAllCart']);
             Route::post('/add', [UserTransactionController::class, 'addToCart']);
             Route::delete('/delete', [UserTransactionController::class, 'removeCart']);
+            Route::put('/updateqt', [UserTransactionController::class, 'updateProductQuantity']);
         });
     });
 
     Route::group(['prefix' => '/uprod'], function () {
         Route::get('/ctg', [UserProductController::class, 'getAllCategories']);
         Route::get('/list', [UserProductController::class, 'getAllProducts']);
-        Route::get('/detail', [UserTransactionController::class, 'detailProduct']);
+        Route::get('/detail', [UserProductController::class, 'detailProduct']);
     });
 
     Route::group(['prefix' => '/page'], function () {
