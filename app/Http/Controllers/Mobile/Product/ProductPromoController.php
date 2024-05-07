@@ -126,6 +126,31 @@ class ProductPromoController extends Controller
 
     }
 
+    public function getPromo(Request $request){
+        $idShop = $request->input('id_shop');
+        $idProduct = $request->input('id_product');
+
+        $tableProd = $this->generateTableProd($idShop);
+        $tablePromo = $this->generateTablePromo($idShop);
+
+        $isExistShop = $this->isExistShop($idShop);
+
+        if ($isExistShop['status'] === 'error') {
+            return response()->json(['status' => 'error', 'message' => 'Toko tidak ditemukan'], 400);
+        }
+
+        $promo = DB::table(DB::raw("$tablePromo as prm"))
+        ->join(DB::raw("$tableProd as prod"), "prod.id_product", "prm.id_product")
+        ->join('0product_categories as ctg', 'ctg.id_cp_prod', 'prod.id_cp_prod')
+        ->select("prm.*", "prod.id_shop", "prod.product_name", "prod.id_cp_prod", "ctg.category_name", "prod.price", "prod.photo")
+        ->where('prm.id_product', $idProduct)
+        ->orderByDesc('prm.end_date')
+        ->limit(1)
+        ->first();
+
+        return response()->json(['status'=>'success', 'message'=>'data didapatakn', 'data' => $promo], 200);
+    }
+
     public function getPromos(Request $request)
     {
         $idShop = $request->input('id_shop');

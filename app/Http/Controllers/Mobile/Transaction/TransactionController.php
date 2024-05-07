@@ -347,6 +347,7 @@ class TransactionController extends Controller
         ProductController $productController,
         MobileAuthController $mobileAuth,
         MailController $mailController,
+        UserTransactionController $usrCont,
     ) {
         // validasi data
         $validator = Validator::make($request->all(), [
@@ -593,6 +594,20 @@ class TransactionController extends Controller
                         }
                     }
 
+                    // remove product from cart
+                    foreach ($products as $prod) {
+                        // echo ' id user - ' . $prod['id_product'] . ' - ';
+                        $nReqCart = new Request();
+                        $nReqCart->merge(
+                            [
+                                'id_shop' => $idShop,
+                                'id_product' => $prod['id_product'],
+                                'id_user' => $idUser
+                            ]
+                        );
+                        $usrCont->removeCart($nReqCart, $shopController);
+                    }
+
                     return response()->json(['status' => 'success', 'message' => 'Berhasil membuat transaksi'], 201);
                 } else {
                     return response()->json(['status' => 'error', 'message' => 'ID Transaksi tidak ditemukan'], 404);
@@ -664,24 +679,24 @@ class TransactionController extends Controller
                 // Proses query Firestore
                 $fireProd = app('firebase.firestore')->database();
                 $collectionProd = $fireProd->collection('0products');
-            
+
                 // Mendapatkan data produk yang sesuai dengan transaksi
                 $prodData = $collectionProd
-                                ->where('id_shop', '==', $idShop)
-                                ->where('id_product', '==', $detail['id_product'])
-                                ->limit(1)
-                                ->documents();
-            
+                    ->where('id_shop', '==', $idShop)
+                    ->where('id_product', '==', $detail['id_product'])
+                    ->limit(1)
+                    ->documents();
+
                 // Mengambil data produk dari QuerySnapshot jika ada
                 $product = null;
                 foreach ($prodData as $document) {
                     $product = $document->data();
                 }
-            
+
                 // Menyimpan data produk dalam $detail['product']
                 $detail['product'] = $product;
-            }            
-            
+            }
+
             // save trx data to firebase
             $newDocument->set($trxDataArray);
 
