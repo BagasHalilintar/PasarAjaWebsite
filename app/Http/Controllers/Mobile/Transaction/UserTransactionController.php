@@ -142,7 +142,6 @@ class UserTransactionController extends Controller
         }
     }
 
-
     public function getAllCart(Request $request, Shops $shops)
     {
         try {
@@ -174,6 +173,7 @@ class UserTransactionController extends Controller
                     ->select()
                     ->where('id_shop', $docData['id_shop'])
                     ->first();
+                $shopData->photo = asset('shops/' . $shopData->photo);
                 $docData['shop_data'] = $shopData;
 
                 // save data

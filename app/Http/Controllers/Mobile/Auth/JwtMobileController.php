@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mobile\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Mobile\Transaction\UserTransactionController;
 use App\Models\RefreshToken;
 use App\Models\Shops;
 use App\Models\User;
@@ -70,7 +71,7 @@ class JwtMobileController extends Controller
             $millisNow = Carbon::now()->timestamp;
             $exp =  $millisNow + env('JWT_ACCESS_TOKEN_EXPIRED');
             $expRefresh = $millisNow + env('JWT_REFRESH_TOKEN_EXPIRED');
-     
+
             // prepare payload
             $payload = ['data' => $data, 'number' => 1, 'exp' => $exp];
             $payloadRefresh = ['data' => $data, 'exp' => $expRefresh];
@@ -94,6 +95,36 @@ class JwtMobileController extends Controller
             return ['status' => 'success', 'access_token' => $token, 'refresh_token' => $rToken];
         } else {
             return ['status' => 'error', 'message' => 'email e ga onok'];
+        }
+    }
+
+    public function generateTokenTrx(Request $request, UserTransactionController $usTrx)
+    {
+        // get data
+        $request->input('email');
+        $request->input('type');
+
+        $responseShop = $usTrx->listOfTrx($request);
+        if ($responseShop->getStatusCode() === 200) {
+            $shopData = $responseShop->getData()->data;
+            $data = json_decode(json_encode($shopData));
+            // kalkulasi expiration time 
+            $millisNow = Carbon::now()->timestamp;
+            $exp =  $millisNow + env('JWT_ACCESS_TOKEN_EXPIRED');
+            $expRefresh = $millisNow + env('JWT_REFRESH_TOKEN_EXPIRED');
+
+            // prepare payload
+            $payload = ['data' => $data, 'number' => 1, 'exp' => $exp];
+            $payloadRefresh = ['data' => $data, 'exp' => $expRefresh];
+            // get secret key
+            $secretKey = env('JWT_SECRET_MOBILE');
+            $secretRefreshKey = env('JWT_SECRET_REFRESH_TOKEN_MOBILE');
+            // generate jwt
+            $token = JWT::encode($payload, $secretKey, 'HS512');
+            $rToken = JWT::encode($payloadRefresh, $secretRefreshKey, 'HS512');
+            return response()->json(['status' => 'success', 'access_token' => $token, 'refresh_token' => $rToken], 200);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Toko tidak ditemukan'], 404);
         }
     }
 

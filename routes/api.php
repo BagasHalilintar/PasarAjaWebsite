@@ -4,9 +4,11 @@ use App\Http\Controllers\Firebase\FirestoreController;
 use App\Http\Controllers\Firebase\MessagingController;
 use App\Http\Controllers\Firebase\StorageController;
 use App\Http\Controllers\Messenger\MailController;
+use App\Http\Controllers\Mobile\Auth\JwtMobileController;
 use App\Http\Controllers\Mobile\Auth\MobileAuthController;
 use App\Http\Controllers\Mobile\Auth\VerifyController;
 use App\Http\Controllers\Mobile\Category\CategoryController;
+use App\Http\Controllers\Mobile\Page\CustomerPageController;
 use App\Http\Controllers\Mobile\Page\OrderMerchantController;
 use App\Http\Controllers\Mobile\Page\ProductMerchantController;
 use App\Http\Controllers\Mobile\Page\PromoMerchantController;
@@ -41,6 +43,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => '/m'], function () {
     Route::group(['prefix' => '/test'], function () {
         Route::get('/first', [MobileAuthController::class, 'first']);
+        Route::get('jwttrx', [JwtMobileController::class, 'generateTokenTrx']);
     });
 
     // user route
@@ -160,7 +163,7 @@ Route::group(['prefix' => '/m'], function () {
     Route::group(['prefix' => '/utrx'], function () {
         Route::get('/list', [UserTransactionController::class, 'listOfTrx']);
         Route::get('/data', [UserTransactionController::class, 'dataTrx']);
-        Route::group(['prefix' => '/cart'], function() {
+        Route::group(['prefix' => '/cart'], function () {
             Route::get('/', [UserTransactionController::class, 'getAllCart']);
             Route::post('/add', [UserTransactionController::class, 'addToCart']);
             Route::delete('/delete', [UserTransactionController::class, 'removeCart']);
@@ -204,8 +207,10 @@ Route::group(['prefix' => '/m'], function () {
         });
 
         // customer
-        Route::group(['prefix' => 'merchant'], function () {
-            //
+        Route::group(['prefix' => 'customer'], function () {
+            Route::get('/home', [CustomerPageController::class, 'beranda']);
+            Route::get('/shop', [CustomerPageController::class, 'shopDetail']);
+            Route::get('/promo', [CustomerPageController::class, 'promo']);
         });
     });
 });
