@@ -32,15 +32,15 @@
               <span class="menu-title">Event</span>
             </a>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="nav-link" href="#">
               <i class="icon-grid menu-icon"></i>
               <span class="menu-title">History Pesanan</span>
             </a>
-          </li>
+          </li> -->
           <li class="nav-label" id="text-nav">ACCOUNT PAGES</li>
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="/layouts/profil">
               <i class="icon-head menu-icon"></i>
               <span class="menu-title">Profile</span>
             </a>

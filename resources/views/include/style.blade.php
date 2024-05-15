@@ -15,3 +15,9 @@
   <link rel="stylesheet" href="{{asset('admin_asset/template/css/vertical-layout-light/dashboard.css')}}">
   <!-- endinject -->
   <link rel="shortcut icon" href="{{asset ('admin_asset/template/images/favicon.png')}}" />
+
+ 
+   <!-- Tambahkan sumber daya -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.6/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.js"></script>

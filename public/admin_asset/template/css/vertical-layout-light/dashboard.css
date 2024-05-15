@@ -40,10 +40,60 @@
     align-items: center;
     padding-top: 10px;
     font-weight: bold;
-    margin-left: 50%;
+    margin-left: 20%;
 }
 
 #btn-detail:hover{
     background-color: #0D4A31;
     color: white;
 }
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th, td {
+  padding: 8px;
+  text-align: left;
+}
+.team-member-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+/* Menghilangkan border pada sel-sel tabel */
+table, th, td {
+  border: none;
+}
+#gambar-5{
+width: 70px;
+height: 70px;
+}
+#text-5{
+font-size: small;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  padding: 20px;
+  background-color: #fff;
+}
+
+.card-title {
+  font-size: 24px;
+  color: #333;
+}
+
+.card-text {
+  font-size: 16px;
+  color: #666;
+}
+
+/* .modal-body {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+} */
+

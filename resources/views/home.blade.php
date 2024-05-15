@@ -49,9 +49,12 @@
                         <li class="nav-item"><a id="nav-text3" href="#about">Promo</a></li>
                         <li class="nav-item"><a id="nav-text4" href="#event">Event</a></li>
                         <li class="nav-item"><a id="nav-text5" href="#contact">Contact</a></li>
-                        <a class="btn btn-outline-success mb-3" id="sign-in" href="{{ route('login') }}">Sign In</a>
+                        <a class="btn btn-outline-success mb-3" id="sign-in" href="{{ route('loginview') }}">Sign In</a>
 
                     </ul>
+
+
+                    
                 </div>
             </div>
         </nav>
@@ -79,7 +82,7 @@
             <img src="{{asset('img/fresh.png')}}" alt="" id="row-img">
         </div>
 
-        <!-- informasis-->
+        <!-- informasi-->
         <section class="page-section" id="informasi">
             <div class="container">
                  <div class="text-center">
@@ -88,16 +91,50 @@
                  </div>
                  <div class="row text-center">
                   <div class="d-flex mt-5" style="gap:15px">
-                  @foreach ($dataInformasi as $dii)
+                    @foreach ($dataInformasi as $dii)
 <div class="image-container">
-    <img src="{{ url('/data_informasi/'.$dii->foto) }}" alt="" class="row-img">
-    <!-- <button class="btn">{{ $dii->judul }}</button> -->
+    <a href="#informasi" style="text-decoration: none;" onclick="tampilkanInformasi('{{ $dii->judul }}', '{{ url('/data_informasi/'.$dii->foto) }}', '{{ $dii->deskripsi }}')">
+        <img src="{{ url('/data_informasi/'.$dii->foto) }}" alt="" class="row-img"><br>
         <div class="text-center">
-                    <h5 class="">{{ $dii->judul }}</h4>
-                    <p class="text" id="text-informasi">{{ $dii->deskripsi }}</p>
-                </div>
+            <h5 class="">{{ $dii->judul }}</h5>
+        </div>
+    </a>
 </div>
 @endforeach
+
+
+<!-- Modal Popup Informasi-->
+<div class="modal fade" id="informasiModal" tabindex="-1" aria-labelledby="informasiModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="informasiModalLabel">Informasi Detail</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="informasiDetail">
+            <!-- Konten informasi akan dimasukkan melalui JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Script untuk menangani klik pada gambar -->
+  <script>
+    // Fungsi untuk menampilkan modal dengan detail informasi
+    function tampilkanInformasi(judul, foto, deskripsi) {
+      var modalBody = document.getElementById('informasiDetail');
+      modalBody.innerHTML = `
+        <img src="${foto}" class="img-fluid mb-3" alt="${judul}">
+        <h5>${judul}</h5>
+        <p>${deskripsi}</p>
+      `;
+      var modal = new bootstrap.Modal(document.getElementById('informasiModal'));
+      modal.show();
+    }
+  </script>
+
 
 
                    
@@ -164,16 +201,51 @@
                 </div>
                 <div class="row text-center">
         <div class="d-flex mt-5" style="gap:15px">
-        @foreach ($dataEvent as $key => $dee)
-            <div class="image-container">
-            <img src="{{ url('/data_event/'.$dee->foto) }}" alt="" class="row-img">
-                <div class="label">{{ $key + 1 }}</div>
-                <div class="text-center">
-                    <h5 class="">{{ $dee->judul }}</h4>
-                    <p class="text" id="text-event">{{ $dee->deskripsi }}</p>
-                </div>
-            </div>
-            @endforeach
+        <!-- Iterasi data event -->
+@foreach ($dataEvent as $key => $dee)
+<div class="image-container">
+    <a href="#event" style="text-decoration: none;" onclick="tampilkanEvent('{{ $dee->judul }}', '{{ url('/data_event/'.$dee->foto) }}', '{{ $dee->deskripsi }}')">
+        <img src="{{ url('/data_event/'.$dee->foto) }}" alt="" class="row-img"><br>
+        <div class="label">{{ $key + 1 }}</div>
+        <div class="text-center">
+            <h5 class="">{{ $dee->judul }}</h5>
+        </div>
+    </a>
+</div>
+@endforeach
+
+
+<!-- Modal Popup -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="eventModalLabel">Detail Event</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="eventDetail">
+            <!-- Konten event akan dimasukkan melalui JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Script untuk menangani klik pada gambar -->
+  <script>
+    // Fungsi untuk menampilkan modal dengan detail event
+    function tampilkanEvent(judul, foto, deskripsi) {
+      var modalBody = document.getElementById('eventDetail');
+      modalBody.innerHTML = `
+        <img src="${foto}" class="img-fluid mb-3" alt="${judul}">
+        <h5>${judul}</h5>
+        <p>${deskripsi}</p>
+      `;
+      var modal = new bootstrap.Modal(document.getElementById('eventModal'));
+      modal.show();
+    }
+  </script>
             <!-- <div class="image-container">
                 <img src="{{asset('img/event2.png')}}" alt="" class="row-img">
                 <div class="label">2</div>

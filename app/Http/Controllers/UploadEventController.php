@@ -43,12 +43,20 @@ class UploadEventController extends Controller{
 
     }
     public function destroy($id_event)
-    {
-        $event = Event::findOrFail($id_event);
-        $event->delete();
+{
+    $event = Event::findOrFail($id_event);
 
-        return redirect()->back()->with('success', 'Event berhasil dihapus');
+    // Hapus foto terkait
+    $fotoPath = public_path('data_event/' . $event->foto);
+    if (file_exists($fotoPath)) {
+        unlink($fotoPath); // Hapus foto dari folder penyimpanan
     }
+
+    $event->delete();
+
+    return redirect()->back()->with('success', 'Event berhasil dihapus');
+}
+
 
     
 }

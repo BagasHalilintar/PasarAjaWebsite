@@ -43,10 +43,18 @@ UploadController extends Controller{
 
     }
     public function destroy($id_informasi)
-    {
-        $informasi = Informasi::findOrFail($id_informasi);
-        $informasi->delete();
+{
+    $informasi = Informasi::findOrFail($id_informasi);
 
-        return redirect()->back()->with('success', 'Paket berhasil dihapus');
+    // Hapus gambar terkait
+    $fotoPath = public_path('data_informasi/' . $informasi->foto);
+    if (file_exists($fotoPath)) {
+        unlink($fotoPath); // Hapus gambar dari folder penyimpanan
     }
+
+    $informasi->delete();
+
+    return redirect()->back()->with('success', 'Informasi berhasil dihapus');
+}
+
 }
