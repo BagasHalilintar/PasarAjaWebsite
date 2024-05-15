@@ -173,8 +173,8 @@ class ProductReviewController extends Controller
         }
 
         $ratingData = [
-            'rating' => $averageRating,
-            'total_review' => $totalReviews,
+            'rating' => doubleval($averageRating), // jadikan double
+            'total_review' => intval($totalReviews),
             'reviewers' => $reviews,
         ];
 
@@ -183,14 +183,14 @@ class ProductReviewController extends Controller
 
     public function isReview(Request $request)
     {
-        $idTrx = $request->input('id_trx');
+        $idTrx = $request->input('order_code');
         $idShop = $request->input('id_shop');
         $idProd = $request->input('id_product');
 
         $tableRvw = $this->generateTableReview($idShop);
-
+        
         $isExist = DB::table($tableRvw)
-            ->where('id_trx', $idTrx)
+            ->where('order_code', $idTrx)
             ->where('id_product', $idProd)
             ->exists();
 

@@ -60,36 +60,6 @@ class MobileAuthController extends Controller
         }
     }
 
-    private function createTableCart($tableName)
-    {
-        // create table cart
-        Schema::dropIfExists($tableName);
-        Schema::create($tableName, function (Blueprint $table) {
-            $table->id('id_cart');
-            $table->unsignedBigInteger('id_user');
-            $table->unsignedBigInteger('id_shop');
-            $table->integer('id_product');
-            $table->smallInteger('quantity');
-            $table->integer('price');
-            $table->timestamps();
-            $table->foreign('id_user')->references('id_user')
-                ->on('0users')->onDelete('cascade');
-            $table->foreign('id_shop')->references('id_shop')
-                ->on('0shops')->onDelete('cascade');
-        });
-    }
-
-    private function createTableTransaction($tableName)
-    {
-        // create table transaction
-        Schema::dropIfExists($tableName);
-        Schema::create($tableName, function (Blueprint $table) {
-            $table->id('id_trx');
-            $table->mediumText('transaction');
-            $table->timestamps();
-        });
-    }
-
     public function createUser(Request $request, User $user)
     {
 

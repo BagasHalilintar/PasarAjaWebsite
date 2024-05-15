@@ -4,9 +4,11 @@ use App\Http\Controllers\Firebase\FirestoreController;
 use App\Http\Controllers\Firebase\MessagingController;
 use App\Http\Controllers\Firebase\StorageController;
 use App\Http\Controllers\Messenger\MailController;
+use App\Http\Controllers\Mobile\Auth\JwtMobileController;
 use App\Http\Controllers\Mobile\Auth\MobileAuthController;
 use App\Http\Controllers\Mobile\Auth\VerifyController;
 use App\Http\Controllers\Mobile\Category\CategoryController;
+use App\Http\Controllers\Mobile\Page\CustomerPageController;
 use App\Http\Controllers\Mobile\Page\OrderMerchantController;
 use App\Http\Controllers\Mobile\Page\ProductMerchantController;
 use App\Http\Controllers\Mobile\Page\PromoMerchantController;
@@ -15,6 +17,7 @@ use App\Http\Controllers\Mobile\Product\ProductComplainController;
 use App\Http\Controllers\Mobile\Product\ProductHistoryController;
 use App\Http\Controllers\Mobile\Product\ProductPromoController;
 use App\Http\Controllers\Mobile\Product\ProductReviewController;
+use App\Http\Controllers\Mobile\Product\UserProductController;
 use App\Http\Controllers\Mobile\Transaction\TransactionController;
 use App\Http\Controllers\Mobile\Transaction\UserTransactionController;
 use App\Http\Controllers\Website\ShopController;
@@ -40,6 +43,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => '/m'], function () {
     Route::group(['prefix' => '/test'], function () {
         Route::get('/first', [MobileAuthController::class, 'first']);
+        Route::get('jwttrx', [JwtMobileController::class, 'generateTokenTrx']);
     });
 
     // user route
@@ -137,6 +141,7 @@ Route::group(['prefix' => '/m'], function () {
             Route::get('/detail', [ProductPromoController::class, 'detailPromo']);
             Route::post('/create', [ProductPromoController::class, 'addPromo']);
             Route::put('/update', [ProductPromoController::class, 'updatePromo']);
+            Route::get('/data', [ProductPromoController::class, 'getPromo']);
             Route::delete('/delete', [ProductPromoController::class, 'deletePromo']);
         });
     });
@@ -156,7 +161,20 @@ Route::group(['prefix' => '/m'], function () {
     });
 
     Route::group(['prefix' => '/utrx'], function () {
-        Route::get('list', [UserTransactionController::class, 'listOfTrxNew']);
+        Route::get('/list', [UserTransactionController::class, 'listOfTrx']);
+        Route::get('/data', [UserTransactionController::class, 'dataTrx']);
+        Route::group(['prefix' => '/cart'], function () {
+            Route::get('/', [UserTransactionController::class, 'getAllCart']);
+            Route::post('/add', [UserTransactionController::class, 'addToCart']);
+            Route::delete('/delete', [UserTransactionController::class, 'removeCart']);
+            Route::put('/updateqt', [UserTransactionController::class, 'updateProductQuantity']);
+        });
+    });
+
+    Route::group(['prefix' => '/uprod'], function () {
+        Route::get('/ctg', [UserProductController::class, 'getAllCategories']);
+        Route::get('/list', [UserProductController::class, 'getAllProducts']);
+        Route::get('/detail', [UserProductController::class, 'detailProduct']);
     });
 
     Route::group(['prefix' => '/page'], function () {
@@ -189,8 +207,10 @@ Route::group(['prefix' => '/m'], function () {
         });
 
         // customer
-        Route::group(['prefix' => 'merchant'], function () {
-            //
+        Route::group(['prefix' => 'customer'], function () {
+            Route::get('/home', [CustomerPageController::class, 'beranda']);
+            Route::get('/shop', [CustomerPageController::class, 'shopDetail']);
+            Route::get('/promo', [CustomerPageController::class, 'promo']);
         });
     });
 });
