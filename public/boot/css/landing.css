@@ -180,3 +180,36 @@ text-decoration: underline;
     width: 200%;
     height: 500%;
 }
+.modal-content {
+    border-radius: 15px;
+    background: linear-gradient(135deg, #08a115, #9fe377);
+    color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+.modal-header, .modal-footer {
+    border: none;
+}
+.modal-title {
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+.modal-body p {
+    font-family: 'Helvetica', sans-serif;
+    font-size: 16px;
+}
+.close {
+    color: white;
+    opacity: 1;
+}
+.close:hover {
+    color: #ff6b6b;
+}
+.btn-secondary {
+    background-color: #ff6b6b;
+    border-color: #ff6b6b;
+}
+.btn-secondary:hover {
+    background-color: #ff4757;
+    border-color: #ff4757;
+}

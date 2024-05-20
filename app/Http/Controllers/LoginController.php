@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\WebUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -25,20 +25,15 @@ class LoginController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        // Buat pengguna baru berdasarkan input
-        $user = WebUser::create([
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
-
-        // Jika pengguna berhasil dibuat, arahkan ke halaman login dengan pesan sukses
-        if ($user) {
+        $user = WebUser::where('email', $request->email)->first();
+// dd($user);
+        if ($user && Hash::check($request->password, $user->password)) {
+            // Auth::login($user);
             return redirect('/layouts/index')->with('success', 'Pengguna berhasil didaftarkan. Silakan login.');
-            // echo 'User Berhasil Login';
-        }
+        }else{
 
-        // Jika terjadi kesalahan, kembali ke halaman pendaftaran dengan pesan error
-        // return back()->withErrors(['error' => 'Gagal membuat pengguna. Silakan coba lagi.']);
+        return back()->with('error', 'Username atau Password Salah, Coba Lagi');
+        }
     }
 
 
@@ -46,8 +41,8 @@ class LoginController extends Controller
     // Proses logout
     public function logout()
     {
-        Auth::logout();
+        // Auth::logout();
 
-        return redirect('/');
+        return redirect()->route('loginview');
     }
 }

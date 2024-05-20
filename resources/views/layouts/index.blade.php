@@ -126,17 +126,17 @@
               <p class="card-title">Alur Pemesanan</p>
               <h5>Langkah-langkah</h5>
               <li class="nav-item">
-              <i class="icon-mail menu-icon"></i><span class="menu-title" style="margin-left: 20px;">pembeli pesan barang di aplikasi mobile</span> <br>
+              <i class=""></i><span class="menu-title" style="margin-left: 20px;">pembeli pesan barang di aplikasi mobile</span> <br>
               <li class="nav-item">
-              <i class="icon-mail menu-icon"></i><span class="menu-title" style="margin-left: 20px;">Menyelesaikan transaksi</span> <br>
+              <i class=""></i><span class="menu-title" style="margin-left: 20px;">Menyelesaikan transaksi</span> <br>
               <li class="nav-item">
-              <i class="icon-mail menu-icon"></i><span class="menu-title" style="margin-left: 20px;">Penjual melakukan konfirmasi pesanan</span> <br>
+              <i class=""></i><span class="menu-title" style="margin-left: 20px;">Penjual melakukan konfirmasi pesanan</span> <br>
               <li class="nav-item">
-              <i class="icon-mail menu-icon"></i><span class="menu-title" style="margin-left: 20px;">Muncul notifikasi status pesanan pembeli</span> <br>
+              <i class=""></i><span class="menu-title" style="margin-left: 20px;">Muncul notifikasi status pesanan pembeli</span> <br>
               <li class="nav-item">
-              <i class="icon-mail menu-icon"></i><span class="menu-title" style="margin-left: 20px;">Barang diproses</span> <br>  
+              <i class=""></i><span class="menu-title" style="margin-left: 20px;">Barang diproses</span> <br>  
               <li class="nav-item">
-              <i class="icon-mail menu-icon"></i><span class="menu-title" style="margin-left: 20px;">Pembeli mengambil barang dipasar</span> <br>         
+              <i class=""></i><span class="menu-title" style="margin-left: 20px;">Pembeli mengambil barang dipasar</span> <br>         
             </div>
             </div>
           </div>

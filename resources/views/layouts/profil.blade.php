@@ -97,16 +97,7 @@
     </tr>
     <!-- Dan seterusnya untuk anggota-anggota tim -->
 
-    <div class="container mt-5">
-      <h2>User Profile</h2>
-      <div class="card">
-          <div class="card-body">
-              <h5 class="card-title">Profile Information</h5>
-              <p class="card-text"><strong>Email:</strong> {{ $user->email }}</p>
-              <p class="card-text"><strong>Password:</strong> {{ $user->password }}</p>
-              <!-- Perhatikan bahwa menampilkan password seperti ini adalah praktik yang tidak aman -->
-          </div>
-      </div>
+   
   </div>
 </table>
               

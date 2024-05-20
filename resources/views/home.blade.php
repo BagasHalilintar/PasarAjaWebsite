@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
@@ -64,17 +70,38 @@
                 <div class="row">
                     <div class="col-xxl-12">
                         <div class="card d-flex"  id="body-head">
-                        <div class="card-body" id="text-title">
-                            <p class="card-text mb-3">Hello!!!</p>
-                            <h5 class="card-title">Welcome To PasarAja</h5>
-                            <p class="card-text">Nikmati kemudahan berbelanja di pasar melalui aplikasi </p>
-                            <p class="card-text">PasarAja,selalu siap membantu memenuhi kebutuhanmu</p>
-                            <a href="#" class="btn mt-5" id="btn-detail">Read More</a>
-                        </div>
+                            <div class="card-body" id="text-title">
+                                <p class="card-text mb-3">Hello!!!</p>
+                                <h5 class="card-title">Welcome To PasarAja</h5>
+                                <p class="card-text">Nikmati kemudahan berbelanja di pasar melalui aplikasi</p>
+                                <p class="card-text">PasarAja, selalu siap membantu memenuhi kebutuhanmu</p>
+                                <a href="#" class="btn mt-5" id="btn-detail" data-toggle="modal" data-target="#readMoreModal">Read More</a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <!-- Modal -->
+<div class="modal fade" id="readMoreModal" tabindex="-1" role="dialog" aria-labelledby="readMoreModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="readMoreModalLabel">Read More</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Isi pop-up di sini -->
+          <p>Nikmati kemudahan berbelanja di pasar melalui aplikasi PasarAja, selalu siap membantu memenuhi kebutuhanmu. Dengan PasarAja, belanja jadi lebih mudah, cepat, dan nyaman. Ayo mulai belanja sekarang dan rasakan perbedaannya!</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
         </header>
         <div class="d-flex mt-5">
             <img src="{{asset('img/akses.png')}}" alt="" id="row-img">
@@ -149,10 +176,29 @@
         <div class="card d-flex" id="body-head">
             <div class="card-body">
                 <h2 class="card-title">Pasar Wage Nganjuk</h2><br>
-                <p class="card-text">Pasar wage merupakan sebuah pasar yang terletak di Jl.Ahmad Yani, </p>
-                <p class="card-text">Payaman, Kec.Nganjuk, Kabupaten Nganjuk, buka jam 02.00 s/d 15.00 WIB</p>
-                <a href="#" class="btn mt-5" id="btn-detail">Read More</a>
+                <p class="card-text">Pasar Wage merupakan sebuah pasar yang terletak di Jl. Ahmad Yani,</p>
+                <p class="card-text">Payaman, Kec. Nganjuk, Kabupaten Nganjuk, buka jam 02.00 s/d 15.00 WIB</p>
+                <a href="#" class="btn mt-5" id="btn-detail" data-toggle="modal" data-target="#readMoreModal">Read More</a>
             </div>
+            <!-- Modal -->
+    <div class="modal fade" id="readMoreModal" tabindex="-1" role="dialog" aria-labelledby="readMoreModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="readMoreModalLabel">Pasar Wage Nganjuk</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Pasar Wage merupakan sebuah pasar yang terletak di Jl. Ahmad Yani, Payaman, Kec. Nganjuk, Kabupaten Nganjuk. Pasar ini buka setiap hari mulai pukul 02.00 hingga 15.00 WIB. Pasar ini terkenal dengan berbagai macam produk segar yang dijual, mulai dari sayuran, buah-buahan, hingga kebutuhan sehari-hari lainnya. Dengan lokasi yang strategis dan jam buka yang fleksibel, Pasar Wage menjadi pilihan utama masyarakat sekitar untuk berbelanja kebutuhan mereka.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
         </div>
     </div>
     <div class="col-xxl-6">
