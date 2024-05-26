@@ -2,31 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Event;
-use App\Models\Informasi;
+use App\Http\Controllers\Website\ShopController;
+use App\Models\Shops;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 
-class HomeController extends Controller
+class Promocontroller extends Controller
 {
-    public function home() {
-    // Mengambil data dari model Informasi
-    $dataInformasi = Informasi::get();
-    
-    // Mengambil data dari model Event
-    $dataEvent = Event::get();
-    
-    // Mengambil data promosi menggunakan method getPromos
-    $listPromo = $this->getPromos();
-    
-    // Mendapatkan data dari listPromo
-    $data = $listPromo->getData()->data;
-    
-    // Mengirimkan data ke view 'home' menggunakan compact
-    return view('home', compact('dataInformasi', 'dataEvent', 'data'));
-}
-public function getPromos()
+    public function getPromos()
     {
         $allPromos = [];
 
@@ -64,6 +48,10 @@ public function getPromos()
 
         return response()->json(['status' => 'success', 'message' => 'Data didapatkan', 'data' => $allPromos], 200);
     }
-
-   
+    public function promo(ShopController $shopController, Shops $shops)
+    {
+        // $listPromo = $shopController->listOfShop($shops)->getData()->data;
+        $listPromo = $this->getPromos();
+        return view('layouts.promo', ['data' => $listPromo->getData()->data]);
+    }
 }

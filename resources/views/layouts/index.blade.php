@@ -5,7 +5,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Skydash Admin</title>
+  <title>PasarAja</title>
   @include('include.style')
 </head>
 <body>
@@ -93,8 +93,8 @@
                 <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
                 <div class="card" style= "background-color: #0D4A31; color: white;">
                     <div class="card-body">
-                      <p class="mb-4">Jumplah Promo</p>
-                      <p class="fs-30 mb-2">3</p>
+                      <p class="mb-4">Jumlah Promo</p>
+                      <p class="fs-30 mb-2">{{ $totalpromo }}</p>
                      
                     </div>
                   </div>

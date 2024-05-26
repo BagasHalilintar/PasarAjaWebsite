@@ -176,10 +176,12 @@ text-decoration: underline;
     border: 0;
 }
 
-#logo-1{
-    width: 200%;
-    height: 500%;
+#logo-1 {
+    width: 100px; /* Ganti dengan lebar yang diinginkan */
+    height: 300px; /* Menjaga rasio aspek gambar */
 }
+
+
 .modal-content {
     border-radius: 15px;
     background: linear-gradient(135deg, #08a115, #9fe377);
@@ -213,3 +215,4 @@ text-decoration: underline;
     background-color: #ff4757;
     border-color: #ff4757;
 }
+

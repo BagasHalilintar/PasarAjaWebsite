@@ -92,6 +92,11 @@ font-size: small;
   color: #666;
 }
 
+.logo-3{
+  width: 500%;
+  height: auto;
+}
+
 /* .modal-body {
   max-height: calc(100vh - 200px);
   overflow-y: auto;

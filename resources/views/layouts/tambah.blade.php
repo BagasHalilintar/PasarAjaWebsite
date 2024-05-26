@@ -5,7 +5,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Skydash Admin</title>
+  <title>PasarAja</title>
   @include('include.style')
 </head>
 
@@ -122,7 +122,7 @@
                             @foreach($data as $shop)
                             <tr>
                               <td>
-                                <img src="{{ asset('shops/' . $shop->photo) }}" alt="Shop Photo"
+                                <img src="{{ $shop->photo }}" alt="Shop Photo"
                                   style="width: 100px; height: 100px; border-radius: 0; object-fit: cover;">
                               </td>
                               {{-- <td>{{ $shop->id_shop }}</td> --}}

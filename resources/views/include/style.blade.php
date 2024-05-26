@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="{{asset('admin_asset/template/css/vertical-layout-light/style.css')}}">
   <link rel="stylesheet" href="{{asset('admin_asset/template/css/vertical-layout-light/dashboard.css')}}">
   <!-- endinject -->
-  <link rel="shortcut icon" href="{{asset ('admin_asset/template/images/favicon.png')}}" />
+  <link rel="shortcut icon" href="{{asset ('admin_asset/template/images/Logo3.png')}}" />
 
  
    <!-- Tambahkan sumber daya -->

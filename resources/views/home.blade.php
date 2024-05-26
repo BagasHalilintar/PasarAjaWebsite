@@ -11,10 +11,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Pasar Aja loo kii</title>
+        <title>PasarAja</title>
         <!-- Favicon-->
-        <link href="./vendor/jqvmap/css/jqvmap.min.css" rel="stylesheet">
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <link rel="shortcut icon" href="{{asset ('admin_asset/template/images/Logo3.png')}}" />
+        {{-- <link href="./vendor/jqvmap/css/jqvmap.min.css" rel="stylesheet">
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" /> --}}
         <!-- Font Awesome icons (free version)-->
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
         <!-- Google fonts-->
@@ -23,6 +24,13 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="{{asset ('boot/css/styles.css')}}" rel="stylesheet" />
         <link href="{{asset ('boot/css/landing.css')}}" rel="stylesheet" /> 
+        <--map-->
+        <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Menyertakan CSS Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- Menyertakan JavaScript Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <style>
             .image-container {
     width: 500px; /* Sesuaikan dengan lebar yang diinginkan */
@@ -30,7 +38,10 @@
     margin-bottom: 20px; /* Atur margin antara gambar */
     position: relative; /* Atur posisi relatif untuk menempatkan tombol di atas gambar */
 }
-
+#map {
+            height: 500px; /* Atur tinggi peta */
+            width: 70%; /* Atur lebar peta */
+        }
 .row-img {
     width: 100%;
     height: 100%;
@@ -43,7 +54,7 @@
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
             <div class="container">
-                <a class="navbar-brand" href="#page-top"><img id="logo-1" src="{{asset('img/Logo1.png')}}" alt="..." /></a>
+                <a class="navbar-brand" href="#page-top"><img id="logo-1" src="{{asset('admin_asset/template/images/Logo3.png')}}" alt="..." /></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
                     <i class="fas fa-bars ms-1"></i>
@@ -54,7 +65,6 @@
                         <li class="nav-item"><a id="nav-text2" href="#informasi">Informasi</a></li>
                         <li class="nav-item"><a id="nav-text3" href="#about">Promo</a></li>
                         <li class="nav-item"><a id="nav-text4" href="#event">Event</a></li>
-                        <li class="nav-item"><a id="nav-text5" href="#contact">Contact</a></li>
                         <a class="btn btn-outline-success mb-3" id="sign-in" href="{{ route('loginview') }}">Sign In</a>
 
                     </ul>
@@ -112,60 +122,73 @@
         <!-- informasi-->
         <section class="page-section" id="informasi">
             <div class="container">
-                 <div class="text-center">
+                <div class="text-center">
                     <h2 class="section-heading text-uppercase">Informasi Terbaru</h2>
                     <h3 class="section-subheading text-muted">Berikut adalah beberapa informasi terbaru seputar pasar wage</h3>
-                 </div>
-                 <div class="row text-center">
-                  <div class="d-flex mt-5" style="gap:15px">
-                    @foreach ($dataInformasi as $dii)
-<div class="image-container">
-    <a href="#informasi" style="text-decoration: none;" onclick="tampilkanInformasi('{{ $dii->judul }}', '{{ url('/data_informasi/'.$dii->foto) }}', '{{ $dii->deskripsi }}')">
-        <img src="{{ url('/data_informasi/'.$dii->foto) }}" alt="" class="row-img"><br>
-        <div class="text-center">
-            <h5 class="">{{ $dii->judul }}</h5>
-        </div>
-    </a>
-</div>
-@endforeach
-
-
-<!-- Modal Popup Informasi-->
-<div class="modal fade" id="informasiModal" tabindex="-1" aria-labelledby="informasiModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="informasiModalLabel">Informasi Detail</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div id="informasiDetail">
-            <!-- Konten informasi akan dimasukkan melalui JavaScript -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Script untuk menangani klik pada gambar -->
-  <script>
-    // Fungsi untuk menampilkan modal dengan detail informasi
-    function tampilkanInformasi(judul, foto, deskripsi) {
-      var modalBody = document.getElementById('informasiDetail');
-      modalBody.innerHTML = `
-        <img src="${foto}" class="img-fluid mb-3" alt="${judul}">
-        <h5>${judul}</h5>
-        <p>${deskripsi}</p>
-      `;
-      var modal = new bootstrap.Modal(document.getElementById('informasiModal'));
-      modal.show();
-    }
-  </script>
-
-
-
-                   
                 </div>
+                <div id="informasiCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @php $chunks = array_chunk($dataInformasi->toArray(), 2); @endphp
+                        @foreach ($chunks as $key => $chunk)
+                            <div class="carousel-item{{ $key === 0 ? ' active' : '' }}">
+                                <div class="row">
+                                    @foreach ($chunk as $dii)
+                                        <div class="col-md-6 mb-4"> <!-- Tambahkan class mb-4 di sini -->
+                                            <div class="image-container px-md-2"> <!-- Tambahkan class px-md-2 di sini -->
+                                                <a href="#informasi" style="text-decoration: none;" onclick="tampilkanInformasi('{{ $dii['judul'] }}', '{{ url('/data_informasi/'.$dii['foto']) }}', '{{ $dii['deskripsi'] }}')">
+                                                    <img src="{{ url('/data_informasi/'.$dii['foto']) }}" alt="" class="row-img"><br>
+                                                    <div class="text-center">
+                                                        <h5 class="">{{ $dii['judul'] }}</h5>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#informasiCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#informasiCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+        
+                <!-- Modal Popup Informasi-->
+                <div class="modal fade" id="informasiModal" tabindex="-1" aria-labelledby="informasiModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="informasiModalLabel">Informasi Detail</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="informasiDetail">
+                                    <!-- Konten informasi akan dimasukkan melalui JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Script untuk menangani klik pada gambar -->
+                <script>
+                    // Fungsi untuk menampilkan modal dengan detail informasi
+                    function tampilkanInformasi(judul, foto, deskripsi) {
+                        var modalBody = document.getElementById('informasiDetail');
+                        modalBody.innerHTML = `
+                            <img src="${foto}" class="img-fluid mb-3" alt="${judul}">
+                            <h5>${judul}</h5>
+                            <p>${deskripsi}</p>
+                        `;
+                        var modal = new bootstrap.Modal(document.getElementById('informasiModal'));
+                        modal.show();
+                    }
+                </script>
             </div>
         </section>
         <!-- Portfolio Grid-->
@@ -217,81 +240,150 @@
                     <h2 class="section-heading text-uppercase">Promo</h2>
                     <h3 class="section-subheading text-muted">Berikut adalah beberapa promo yang berlaku bulan ini</h3>
                 </div>
-                <div class="row text-center">
-                  <div class="d-flex mt-5" style="gap:15px">
-                    <div class="image-container">
-                        <img src="{{asset('img/promo2.png')}}" alt="" class="row-img">
-                        <a href="#" class="btn mb-5" id="btn-detail">Read More</a>
-                        <label class="text">Hari Valentine</label>
+        
+                <!-- Carousel -->
+                <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @php $chunks = array_chunk($data, 2); @endphp
+                        @foreach ($chunks as $key => $chunk)
+                            <div class="carousel-item{{ $key === 0 ? ' active' : '' }}">
+                                <div class="row justify-content-center">
+                                    @foreach ($chunk as $shop)
+                                        <div class="col-md-6 mb-4">
+                                            <div class="image-container">
+                                                <a href="#promo" style="text-decoration: none;" onclick="tampilkanPromo('{{ $shop->product_name }}', '{{ $shop->photo }}', '{{ $shop->promo_price }}', '{{ $shop->start_date }}', '{{ $shop->end_date }}')">
+                                                    <img src="{{ $shop->photo }}" alt="Shop Photo" class="row-img">
+                                                    <div class="label">{{ $loop->parent->index * 2 + $loop->iteration }}</div>
+                                                    <label class="text">{{ $shop->product_name }}</label>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                    <div class="image-container">
-                        <img src="{{asset('img/promo1.png')}}" alt="" class="row-img">
-                        <a href="#" class="btn mb-5" id="btn-detail">Read More</a>
-                        <label class="text">Hari Valentine</label>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#promoCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+        
+                <!-- Modal Popup -->
+                <div class="modal fade" id="promoModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="eventModalLabel">Detail Promo</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="promoDetail">
+                                    <!-- Konten promo akan dimasukkan melalui JavaScript -->
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="image-container">
-                        <img src="{{asset('img/promo2.png')}}" alt="" class="row-img">
-                        <a href="#" class="btn mb-5" id="btn-detail">Read More </a>
-                        <label class="text">Hari Valentine</label>
-                    </div>
-                  </div>
-                
+                </div>
+        
+                <!-- Script untuk menangani klik pada gambar -->
+                <script>
+                    // Fungsi untuk menampilkan modal dengan detail promo
+                    function tampilkanPromo(product_name, foto, promo_price, start_date, end_date) {
+                        var modalBody = document.getElementById('promoDetail');
+                        modalBody.innerHTML = `
+                            <img src="${foto}" class="img-fluid mb-3" alt="${product_name}">
+                            <h5>${product_name}</h5>
+                            <p>Promo Price: ${promo_price}</p>
+                            <p>Start Date: ${start_date}</p>
+                            <p>End Date: ${end_date}</p>
+                        `;
+                        var modal = new bootstrap.Modal(document.getElementById('promoModal'));
+                        modal.show();
+                    }
+                </script>
             </div>
         </section>
+        
 
+        <!-- About-->
         <section class="page-section" id="event">
             <div class="container">
                 <div class="text-center">
                     <h2 class="section-heading text-uppercase">Event</h2>
                     <h3 class="section-subheading text-muted">Berikut adalah beberapa acara yang diselenggarakan</h3>
                 </div>
-                <div class="row text-center">
-        <div class="d-flex mt-5" style="gap:15px">
-        <!-- Iterasi data event -->
-@foreach ($dataEvent as $key => $dee)
-<div class="image-container">
-    <a href="#event" style="text-decoration: none;" onclick="tampilkanEvent('{{ $dee->judul }}', '{{ url('/data_event/'.$dee->foto) }}', '{{ $dee->deskripsi }}')">
-        <img src="{{ url('/data_event/'.$dee->foto) }}" alt="" class="row-img"><br>
-        <div class="label">{{ $key + 1 }}</div>
-        <div class="text-center">
-            <h5 class="">{{ $dee->judul }}</h5>
-        </div>
-    </a>
-</div>
-@endforeach
-
-
-<!-- Modal Popup -->
-<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="eventModalLabel">Detail Event</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div id="eventDetail">
-            <!-- Konten event akan dimasukkan melalui JavaScript -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Script untuk menangani klik pada gambar -->
-  <script>
-    // Fungsi untuk menampilkan modal dengan detail event
-    function tampilkanEvent(judul, foto, deskripsi) {
-      var modalBody = document.getElementById('eventDetail');
-      modalBody.innerHTML = `
-        <img src="${foto}" class="img-fluid mb-3" alt="${judul}">
-        <h5>${judul}</h5>
-        <p>${deskripsi}</p>
-      `;
-      var modal = new bootstrap.Modal(document.getElementById('eventModal'));
-      modal.show();
-    }
-  </script>
+                <div id="eventCarousel" class="carousel slide" data-bs-ride="carousel1">
+                    <div class="carousel-inner">
+                        @php $chunks = array_chunk($dataEvent->toArray(), 2); @endphp
+                        @foreach ($chunks as $key => $chunk)
+                            <div class="carousel-item{{ $key === 0 ? ' active' : '' }}">
+                                <div class="row">
+                                    @foreach ($chunk as $dee)
+                                        <div class="col-md-6 mb-4"> <!-- Tambahkan class mb-4 di sini -->
+                                            <div class="image-container px-md-2"> <!-- Tambahkan class px-md-2 di sini -->
+                                                <a href="#event" style="text-decoration: none;" onclick="tampilkanEvent('{{ $dee['judul'] }}', '{{ url('/data_event/'.$dee['foto']) }}', '{{ $dee['deskripsi'] }}')">
+                                                    <img src="{{ url('/data_event/'.$dee['foto']) }}" alt="" class="row-img"><br>
+                                                    <div class="label">{{ $loop->iteration }}</div>
+                                                    <div class="text-center">
+                                                        <h5 class="">{{ $dee['judul'] }}</h5>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#eventCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#eventCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+        
+                <!-- Modal Popup -->
+                <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="eventModalLabel">Detail Event</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="eventDetail">
+                                    <!-- Konten event akan dimasukkan melalui JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Script untuk menangani klik pada gambar -->
+                <script>
+                    // Fungsi untuk menampilkan modal dengan detail event
+                    function tampilkanEvent(judul, foto, deskripsi) {
+                        var modalBody = document.getElementById('eventDetail');
+                        modalBody.innerHTML = `
+                            <img src="${foto}" class="img-fluid mb-3" alt="${judul}">
+                            <h5>${judul}</h5>
+                            <p>${deskripsi}</p>
+                        `;
+                        var modal = new bootstrap.Modal(document.getElementById('eventModal'));
+                        modal.show();
+                    }
+                </script>
+            </div>
+        </section>
+        
             <!-- <div class="image-container">
                 <img src="{{asset('img/event2.png')}}" alt="" class="row-img">
                 <div class="label">2</div>
@@ -320,55 +412,37 @@
         <!-- Team-->
         <section class="page-section bg-light" id="team">
             <div class="container">
-                <div class="text-center">
-                    <h2 class="section-heading text-uppercase">Our Amazing Team</h2>
-                    <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
-                </div>
+                
                 <div class="row">
+                    <div class="text-center">
+                        <h2 class="section-heading text-uppercase">Map</h2>
+                        <h3 class="section-subheading text-muted">Berikut lokasi Pasar Wage Nganjuk</h3>
+                    </div>
                 <div class="card-body">
                 <div class="map-container">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d253096.35950745232!2d111.78245695484192!3d-7.615110864478897!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e784be1466228d1%3A0x3027a76e352bdc0!2sKabupaten%20Nganjuk%2C%20Jawa%20Timur!5e0!3m2!1sid!2sid!4v1699187134161!5m2!1sid!2sid" 
-                        allowfullscreen="" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
+    <div id="map"></div>
+    <script>
+        // Inisialisasi peta dengan koordinat Pasar Wage Nganjuk
+        var map = L.map('map').setView([-7.608874, 111.8992217], 17);
+
+        // Menambahkan layer peta dari OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Menambahkan marker ke peta untuk Pasar Wage Nganjuk
+        var marker = L.marker([-7.608874, 111.8992217]).addTo(map)
+            .bindPopup('Pasar Wage Nganjuk')
+            .openPopup();
+    </script>
                 </div>
                             
                             
                             </div>
-                    <!-- <div class="col-lg-4">
-                        <div class="team-member">
-                            <img class="mx-auto rounded-circle" src="assets/img/team/1.jpg" alt="..." />
-                            <h4>Parveen Anand</h4>
-                            <p class="text-muted">Lead Designer</p>
-                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Parveen Anand Twitter Profile"><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Parveen Anand Facebook Profile"><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Parveen Anand LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="team-member">
-                            <img class="mx-auto rounded-circle" src="assets/img/team/2.jpg" alt="..." />
-                            <h4>Diana Petersen</h4>
-                            <p class="text-muted">Lead Marketer</p>
-                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Diana Petersen Twitter Profile"><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Diana Petersen Facebook Profile"><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Diana Petersen LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="team-member">
-                            <img class="mx-auto rounded-circle" src="assets/img/team/3.jpg" alt="..." />
-                            <h4>Larry Parker</h4>
-                            <p class="text-muted">Lead Developer</p>
-                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Larry Parker Twitter Profile"><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Larry Parker Facebook Profile"><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Larry Parker LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
-                        </div>
-                    </div> -->
+                   
                 </div>
                 <div class="row">
-                    <div class="col-lg-8 mx-auto text-center"><p class="large text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut eaque, laboriosam veritatis, quos non quis ad perspiciatis, totam corporis ea, alias ut unde.</p></div>
+                    <div class="col-lg-8 mx-auto text-center"><p class="large text-muted">Pasar Wage merupakan pasar yang telah ada sejak lama. Namun Pasar Wage baru diresmikan oleh Gubernur Kepala Daerah Provinsi Jawa Timur Bapak Moh. Noer pada tanggal 8 Juni 1973. Pedagang di Pasar Wage Nganjuk dahulu kebanyakan adalah petani yang menjual hasil ladangnya. Saat ini pasar bukan lagi hanya sebagai tempat untuk menjual hasil ladang tetapi masyarakat mulai menyadari bahwa pasar merupakan tempat atau sumber untuk mendapatkan penghasilan dan berbisnis.</p></div>
                 </div>
             </div>
         </section>
@@ -392,69 +466,7 @@
             </div>
         </div>
         <!-- Contact-->
-        <section class="page-section" id="contact">
-            <div class="container">
-                <div class="text-center">
-                    <h2 class="section-heading text-uppercase">Contact Us</h2>
-                    <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
-                </div>
-                <!-- * * * * * * * * * * * * * * *-->
-                <!-- * * SB Forms Contact Form * *-->
-                <!-- * * * * * * * * * * * * * * *-->
-                <!-- This form is pre-integrated with SB Forms.-->
-                <!-- To make this form functional, sign up at-->
-                <!-- https://startbootstrap.com/solution/contact-forms-->
-                <!-- to get an API token!-->
-                <form id="contactForm" data-sb-form-api-token="API_TOKEN">
-                    <div class="row align-items-stretch mb-5">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <!-- Name input-->
-                                <input class="form-control" id="name" type="text" placeholder="Your Name *" data-sb-validations="required" />
-                                <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
-                            </div>
-                            <div class="form-group">
-                                <!-- Email address input-->
-                                <input class="form-control" id="email" type="email" placeholder="Your Email *" data-sb-validations="required,email" />
-                                <div class="invalid-feedback" data-sb-feedback="email:required">An email is required.</div>
-                                <div class="invalid-feedback" data-sb-feedback="email:email">Email is not valid.</div>
-                            </div>
-                            <div class="form-group mb-md-0">
-                                <!-- Phone number input-->
-                                <input class="form-control" id="phone" type="tel" placeholder="Your Phone *" data-sb-validations="required" />
-                                <div class="invalid-feedback" data-sb-feedback="phone:required">A phone number is required.</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group form-group-textarea mb-md-0">
-                                <!-- Message input-->
-                                <textarea class="form-control" id="message" placeholder="Your Message *" data-sb-validations="required"></textarea>
-                                <div class="invalid-feedback" data-sb-feedback="message:required">A message is required.</div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Submit success message-->
-                    <!---->
-                    <!-- This is what your users will see when the form-->
-                    <!-- has successfully submitted-->
-                    <div class="d-none" id="submitSuccessMessage">
-                        <div class="text-center text-white mb-3">
-                            <div class="fw-bolder">Form submission successful!</div>
-                            To activate this form, sign up at
-                            <br />
-                            <a href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a>
-                        </div>
-                    </div>
-                    <!-- Submit error message-->
-                    <!---->
-                    <!-- This is what your users will see when there is-->
-                    <!-- an error submitting the form-->
-                    <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3">Error sending message!</div></div>
-                    <!-- Submit Button-->
-                    <div class="text-center"><button class="btn btn-primary btn-xl text-uppercase disabled" id="submitButton" type="submit">Send Message</button></div>
-                </form>
-            </div>
-        </section>
+    
         <!-- Footer-->
         <footer class="footer py-4">
             <div class="container">
@@ -467,7 +479,7 @@
                     </div>
                     <div class="col-lg-4 text-lg-end">
                         <a class="link-dark text-decoration-none me-3" href="#!">Privacy Policy</a>
-                        <a class="link-dark text-decoration-none" href="#!">Terms of Use</a>
+                        <a class="link-dark text-decoration-none" href="#!">PasarAja</a>
                     </div>
                 </div>
             </div>

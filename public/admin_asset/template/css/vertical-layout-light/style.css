@@ -28504,7 +28504,7 @@ div.tagsinput span.tag a {
   align-items: center;
   white-space: nowrap;
   padding: 0.8125rem 1.937rem 0.8125rem 1rem;
-  color: #6C7383;
+  color: #006400;
   border-radius: 8px;
   -webkit-transition-duration: 0.45s;
   -moz-transition-duration: 0.45s;
@@ -28522,7 +28522,7 @@ div.tagsinput span.tag a {
   font-size: 1rem;
   line-height: 1;
   margin-right: 1rem;
-  color: #6C7383;
+  color: #006400;
 }
 
 .rtl .sidebar .nav .nav-item .nav-link i.menu-icon {
@@ -28539,7 +28539,7 @@ div.tagsinput span.tag a {
   -moz-osx-font-smoothing: grayscale;
   margin-left: auto;
   margin-right: 0;
-  color: #686868;
+  color: #006400;
 }
 
 .rtl .sidebar .nav .nav-item .nav-link i.menu-arrow {
@@ -28591,7 +28591,7 @@ div.tagsinput span.tag a {
 }
 
 .sidebar .nav .nav-item.active > .nav-link {
-  background: #4B49AC;
+  background: #0D4A31;
   position: relative;
 }
 
@@ -28622,7 +28622,7 @@ div.tagsinput span.tag a {
 }
 
 .sidebar .nav:not(.sub-menu) > .nav-item:hover > .nav-link, .sidebar .nav:not(.sub-menu) > .nav-item:hover[aria-expanded="true"] {
-  background: #4B49AC;
+  background: #0D4A31;
   color: #fff;
 }
 

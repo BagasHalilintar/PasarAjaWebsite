@@ -6,10 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Pasar Aja loo kii</title>
+    <title>PasarAja</title>
     <!-- Favicon-->
-    <link href="./vendor/jqvmap/css/jqvmap.min.css" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <link rel="shortcut icon" href="{{asset ('admin_asset/template/images/Logo3.png')}}" />
     <!-- Font Awesome icons (free version)-->
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <!-- Google fonts-->
@@ -19,7 +18,23 @@
     <link href="{{ asset('boot/css/styles.css') }}" rel="stylesheet" />
     <link href="{{ asset('boot/css/login.css') }}" rel="stylesheet" />
 </head>
-
+<style>
+    .form-outline {
+        position: relative;
+    }
+    .form-outline input[type="password"],
+    .form-outline input[type="text"] {
+        padding-right: 2.5rem; /* Adjust space for the icon */
+    }
+    .form-outline .fa-eye, 
+    .form-outline .fa-eye-slash {
+        position: absolute;
+        top: 50%;
+        right: 2rem;
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
+</style>
 <body>
     <section class="vh-100">
         <div class="container-fluid">
@@ -40,27 +55,43 @@
                         <form style="width: 23rem;" action="{{ route('loginauth') }}" method="POST">
                             @csrf
                             <h3 class="fw-normal mb-3 pb-3" id="text-log">Log in</h3>
-
+                        
                             <div class="form-outline mb-4">
                                 <label class="form-label" for="form2Example18">Email</label>
-                                <input type="email" name="email" id="form2Example18"
-                                    class="form-control form-control-lg" />
+                                <input type="email" name="email" id="form2Example18" class="form-control form-control-lg" />
                             </div>
-
+                        
                             <div class="form-outline mb-4">
                                 <label class="form-label" for="form2Example28">Password</label>
-                                <input type="password" name="password" id="form2Example28"
-                                    class="form-control form-control-lg" />
+                                <div class="input-group">
+                                    <input type="password" name="password" id="form2Example28" class="form-control form-control-lg" />
+                                    <button type="button" id="togglePassword" class="btn btn-outline-secondary">
+                                        <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                                    </button>
+                                </div>
                             </div>
-
+                        
+                            <script>
+                                const togglePassword = document.getElementById('togglePassword');
+                                const passwordField = document.getElementById('form2Example28');
+                                const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+                        
+                                togglePassword.addEventListener('click', function () {
+                                    // Toggle the type attribute
+                                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                                    passwordField.setAttribute('type', type);
+                        
+                                    // Toggle the icon
+                                    togglePasswordIcon.classList.toggle('fa-eye');
+                                    togglePasswordIcon.classList.toggle('fa-eye-slash');
+                                });
+                            </script>
+                        
                             <div class="pt-1 mb-4">
-                                <button class="btn btn-info btn-lg btn-block" id="btn-detail"
-                                    type="submit">Login</button>
+                                <button class="btn btn-info btn-lg btn-block" id="btn-detail" type="submit">Login</button>
                             </div>
-
-                            {{-- <p class="small mb-5 pb-lg-2"><a class="text-detail" href="/forgot">Lupa Password?</a></p> --}}
-                            <!-- <p>Don't have an account? <a href="#!" class="link-info">Register here</a></p> -->
                         </form>
+                        
 
                     </div>
 

@@ -4,7 +4,7 @@
       <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Skydash Admin</title>
+  <title>PasarAja</title>
   @include('include.style')
 </head>
 <body>
@@ -55,31 +55,55 @@
           </div>
           <div class="container">
             <div class="row">
-                <div class="table-responsive">
-  <table class="table align-middle">
-    <thead>
-      <tr>
-      <th>Image</th>
-            <th>Title</th>
-            <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        ...
-      </tr>
-      <tr class="align-bottom">
-        ...
-      </tr>
-      <tr>
-        <td>...</td>
-        <td>...</td>
-        <td class="align-top">This cell is aligned to the top.</td>
-        <td>...</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead>
+                    <tr>
+                      <th>Foto Produk</th>
+                      <th>Nama Produk</th>
+                      <th>Kategori Produk</th>
+                      <th>Harga</th>
+                      <th>Harga Promo</th>
+                      <th>Persentase</th>
+                      <th>Tanggal Awal</th>
+                      <th>Tangal Akhir</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach($data as $shop)
+                    <tr>
+                      <td>
+                        <img src="{{ $shop->photo }}" alt="Shop Photo"
+                          style="width: 100px; height: 100px; border-radius: 0; object-fit: cover;">
+                      </td>
+                      <td>{{ $shop->product_name }}</td>
+                      <td>{{ $shop->category_name }}</td>
+                      <td>{{ $shop->price }}</td>
+                      <td>{{ $shop->promo_price }}</td>
+                      <td>{{ $shop->percentage }} %</td>
+                      <td>{{ \Carbon\Carbon::parse($shop->created_at)->format('Y-m-d') }}</td>
+                      <td>{{ \Carbon\Carbon::parse($shop->updated_at)->format('Y-m-d') }}</td>
+                      {{-- <td>
+                        <a href="#" class="btn btn-primary editBtn" data-toggle="modal" data-target="#editModal"
+                          data-id_shop="{{ $shop->id_shop }}" data-name="{{ $shop->shop_name }}"
+                          data-nohp="{{ $shop->phone_number }}" data-benchmark="{{ $shop->benchmark }}"
+                          data-description="{{ $shop->description }}">Edit</a>
+
+                        <form action="{{ route('delete.toko', $shop->id_shop) }}" method="POST"
+                          style="display: inline;">
+                          @csrf
+                          @method('DELETE')
+                          <!-- Method spoofing -->
+                          <button type="submit" class="btn btn-danger"
+                            onclick="return confirm('Apakah Anda yakin ingin menghapus toko ini?')">Delete</button>
+                        </form>
+                      </td> --}}
+
+                    </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
             <!-- <div class="col-md-6 grid-margin transparent">

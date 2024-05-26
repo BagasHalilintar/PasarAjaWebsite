@@ -9,6 +9,7 @@ use App\Http\Controllers\UploadController;
 
 use App\Http\Controllers\UploadEventController;
 
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\Website\ShopController;
 
 use Illuminate\Support\Facades\Route;
@@ -65,6 +66,7 @@ Route::get('/layouts/index', [LayoutsController::class, 'index']);
 Route::get('/layouts/event', [LayoutsController::class, 'event']);
 Route::get('/layouts/tambah', [LayoutsController::class, 'tambah']);
 Route::get('/layouts/profil', [LayoutsController::class, 'profil']);
+Route::get('/layouts/promo', [LayoutsController::class, 'promo']);
 Route::get('/layouts/promo', [LayoutsController::class, 'promo']);
 Route::get('/layouts/informasi', [LayoutsController::class, 'informasi']);
 

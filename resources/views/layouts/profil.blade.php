@@ -64,7 +64,10 @@
         <div class="card-people d-flex">
             <img src="{{ asset('assets/img/team/1.jpg')}}" alt="Gambar Anggota Tim" id="gambar-5">
             <div class="person-info">
+              @foreach ($admin as $a)
                 <h3>Kelompok C1</h3>
+                <h4>{{ $a->email }}</h4>
+                @endforeach
             </div>
         </div>
         <div class="card-body">
